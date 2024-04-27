@@ -220,14 +220,6 @@ function generateBlockSchedules(schedule) {
   return blockSchedules;
 }
 
-function parseTime(time) {
-  let [hours, minutes] = time.split(":").map((x) => parseInt(x));
-  if (hours < 12) {
-    hours += 24;
-  }
-  return hours * 60 + minutes;
-}
-
 async function fetchSchedule(url) {
   const response = await fetch(url);
   const data = await response.json();
@@ -309,11 +301,11 @@ function populateSchedule(schedule, blockSchedules, dayId, stageIds) {
   const selectedStartMinutes = Object.entries(daySchedule.events)
     .filter(([stageId, _]) => stageIds.includes(stageId))
     .map(([_, stageSchedule]) => stageSchedule[0].start)
-    .map(parseTime);
+    .map(computeNumMinutes);
   const selectedEndMinutes = Object.entries(daySchedule.events)
     .filter(([stageId, _]) => stageIds.includes(stageId))
     .map(([_, stageSchedule]) => stageSchedule[stageSchedule.length - 1].end)
-    .map(parseTime);
+    .map(computeNumMinutes);
 
   // Find the minimum and maximum, to set in SVG viewboxes.
   const startMinutes = Math.min(...selectedStartMinutes);
