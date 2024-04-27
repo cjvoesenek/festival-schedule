@@ -72,7 +72,24 @@ class BlockSchedule {
     return this.#svg;
   }
 
-  // Create a block schedule from a schedule object for a specific day and
+  // Clips the SVG to a specific range of minutes.
+  //
+  // This also sets the width and height of the SVG appropriately.
+  clip(startMinutes, endMinutes) {
+    const width = endMinutes - startMinutes;
+
+    this.#svg.setAttribute(
+      "viewBox",
+      `${startMinutes} 0 ${width} ${BlockSchedule.#BLOCK_HEIGHT_MINUTES}`,
+    );
+    this.#svg.setAttribute("height", blockHeight);
+    this.#svg.setAttribute(
+      "width",
+      (width / BlockSchedule.#BLOCK_HEIGHT_MINUTES) * BlockSchedule.#HEIGHT,
+    );
+  }
+
+  // Creates a block schedule from a schedule object for a specific day and
   // stage.
   static fromSchedule(schedule, dayId, stageId) {
     const events = schedule.getEvents(dayId, stageId);
@@ -211,14 +228,6 @@ function parseTime(time) {
   return hours * 60 + minutes;
 }
 
-function createSvgElement(tag, attributes) {
-  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
-  for (const [key, value] of Object.entries(attributes)) {
-    el.setAttribute(key, value);
-  }
-  return el;
-}
-
 async function fetchSchedule(url) {
   const response = await fetch(url);
   const data = await response.json();
@@ -313,15 +322,9 @@ function populateSchedule(schedule, blockSchedules, dayId, stageIds) {
 
   for (const stageId in blockSchedules) {
     if (!stageIds.includes(stageId)) continue;
-    const svg = blockSchedules[stageId].svg;
-    svg.setAttribute(
-      "viewBox",
-      `${startMinutes} 0 ${range} ${blockHeightMinutes}`,
-    );
-    svg.setAttribute("height", blockHeight);
-    svg.setAttribute("width", (range / blockHeightMinutes) * blockHeight);
-
-    container.appendChild(svg);
+    const blockSchedule = blockSchedules[stageId];
+    blockSchedule.clip(startMinutes, endMinutes);
+    container.appendChild(blockSchedule.svg);
   }
 }
 
