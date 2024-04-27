@@ -111,10 +111,11 @@ class BlockSchedule {
         stroke: BlockSchedule.#STROKE_COLOUR,
         "stroke-width": BlockSchedule.#STROKE_WIDTH,
       });
+      rect.classList.add("block");
       if (event.url) {
         // If the event has a URL, add a click event to open the URL in a new
-        // tab.
-        rect.style.cursor = "pointer";
+        // tab. The block will also be highlighted on hover.
+        rect.classList.add("clickable");
         rect.addEventListener("click", () => window.open(event.url, "_blank"));
       }
       gBlocks.appendChild(rect);
@@ -127,12 +128,14 @@ class BlockSchedule {
         width: width,
         height: BlockSchedule.#BLOCK_HEIGHT_MINUTES,
       });
+      foreignObject.classList.add("block-text");
       // Create wrapping flexbox div to layout the artist name and time.
       const textContainerDiv = createXhtmlElement("div");
-      textContainerDiv.classList.add("block");
+      textContainerDiv.classList.add("text-container");
 
       // Add the artist name and time to this div.
       const nameDiv = createXhtmlElement("div");
+      nameDiv.classList.add("artist-name");
       nameDiv.textContent = event.name;
       const timeDiv = createXhtmlElement("div");
       timeDiv.classList.add("time");

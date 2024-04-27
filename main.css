@@ -64,15 +64,19 @@ nav {
 }
 
 /* Block schedule SVG styles. */
-rect:hover {
+rect.block.clickable {
+  cursor: pointer;
+}
+
+rect.block.clickable:hover {
   opacity: 0.5;
 }
 
-foreignObject {
+foreignObject.block-text {
   pointer-events: none;
 }
 
-div.block {
+div.text-container {
   font-size: 6px;
   display: flex;
   flex-direction: column;
@@ -82,10 +86,10 @@ div.block {
   height: 100%;
 }
 
-div.block > div {
+div.text-container > div.artist-name {
   text-align: center;
 }
 
-div.time {
+div.text-container > div.time {
   font-size: 0.75em;
 }
