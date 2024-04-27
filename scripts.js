@@ -81,12 +81,8 @@ class BlockSchedule {
     const stage = schedule.getStage(stageId);
     const stageColour = stage.colour;
 
-    // Create a root SVG element for each block schedule, do not automatically
-    // stretch the SVG to preserve the aspect ratio; we take care of this
-    // manually.
-    const svg = createSvgElement("svg", {
-      preserveAspectRatio: "none",
-    });
+    // Create a root SVG element for each block schedule.
+    const svg = createSvgElement("svg");
 
     // Create groups for blocks and text.
     const gBlocks = createSvgElement("g", {});
