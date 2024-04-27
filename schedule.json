@@ -1,0 +1,881 @@
+{
+  "stages": [
+    {
+      "id": "one",
+      "name": "One",
+      "colour": "#55be53"
+    },
+    {
+      "id": "two",
+      "name": "Two",
+      "colour": "#ffdd40"
+    },
+    {
+      "id": "secret",
+      "name": "The Secret",
+      "colour": "#82def9"
+    },
+    {
+      "id": "floor",
+      "name": "The Floor",
+      "colour": "#6058ad"
+    },
+    {
+      "id": "casbah",
+      "name": "The Casbah",
+      "colour": "#ff3a35"
+    },
+    {
+      "id": "coney-island",
+      "name": "Coney Island",
+      "colour": "#2a5bb0"
+    },
+    {
+      "id": "muziekgieterij",
+      "name": "Muziekgieterij",
+      "colour": "#a8381b"
+    },
+    {
+      "id": "playground-love",
+      "name": "Playground Love",
+      "colour": "#ff5626"
+    },
+    {
+      "id": "lodge",
+      "name": "The Lodge",
+      "colour": "#f0b573"
+    },
+    {
+      "id": "wilder-wanderland",
+      "name": "Wilder Wanderland",
+      "colour": "#1e6936"
+    }
+  ],
+  "schedule": [
+    {
+      "id": "friday",
+      "name": "Friday",
+      "date": "2024-06-07",
+      "events": {
+        "one": [
+          {
+            "start": "16:30",
+            "end": "17:15",
+            "name": "St. Paul & The Broken Bones",
+            "url": "https://www.bestkeptsecret.nl/program/st-paul-the-broken-bones/49844"
+          },
+          {
+            "start": "18:15",
+            "end": "19:15",
+            "name": "La Femme",
+            "url": "https://www.bestkeptsecret.nl/program/la-femme/49805"
+          },
+          {
+            "start": "20:15",
+            "end": "21:15",
+            "name": "Viagra Boys",
+            "url": "https://www.bestkeptsecret.nl/program/viagra-boys/49911"
+          },
+          {
+            "start": "22:30",
+            "end": "00:00",
+            "name": "Disclosure",
+            "url": "https://www.bestkeptsecret.nl/program/disclosure/49769"
+          }
+        ],
+        "two": [
+          {
+            "start": "14:30",
+            "end": "15:15",
+            "name": "Alice Phoebe Lou",
+            "url": "https://www.bestkeptsecret.nl/program/alice-phoebe-lou/51376"
+          },
+          {
+            "start": "15:45",
+            "end": "16:30",
+            "name": "Libianca",
+            "url": "https://www.bestkeptsecret.nl/program/libianca/49808"
+          },
+          {
+            "start": "17:15",
+            "end": "18:15",
+            "name": "Badbadnotgood",
+            "url": "https://www.bestkeptsecret.nl/program/badbadnotgood/49765"
+          },
+          {
+            "start": "19:15",
+            "end": "20:15",
+            "name": "Omar Apollo",
+            "url": "https://www.bestkeptsecret.nl/program/omar-apollo/51422"
+          },
+          {
+            "start": "21:15",
+            "end": "22:15",
+            "name": "St. Vincent",
+            "url": "https://www.bestkeptsecret.nl/program/st-vincent/51443"
+          },
+          {
+            "start": "00:00",
+            "end": "01:00",
+            "name": "Ki/Ki",
+            "url": "https://www.bestkeptsecret.nl/program/ki-ki/51419"
+          }
+        ],
+        "secret": [
+          {
+            "start": "14:30",
+            "end": "15:15",
+            "name": "Katy Kirby",
+            "url": "https://www.bestkeptsecret.nl/program/katy-kirby/49802"
+          },
+          {
+            "start": "16:00",
+            "end": "16:45",
+            "name": "English Teacher",
+            "url": "https://www.bestkeptsecret.nl/program/english-teacher/49779"
+          },
+          {
+            "start": "17:30",
+            "end": "18:15",
+            "name": "Mannequin Pussy",
+            "url": "https://www.bestkeptsecret.nl/program/mannequin-pussy/49811"
+          },
+          {
+            "start": "19:00",
+            "end": "19:45",
+            "name": "Sofia Kourtesis (live)",
+            "url": "https://www.bestkeptsecret.nl/program/sofia-kourtesis/51436"
+          },
+          {
+            "start": "20:30",
+            "end": "21:30",
+            "name": "Minyo Crusaders",
+            "url": "https://www.bestkeptsecret.nl/program/minyo-crusaders/49820"
+          },
+          {
+            "start": "22:15",
+            "end": "23:15",
+            "name": "Baxter Dury",
+            "url": "https://www.bestkeptsecret.nl/program/baxter-dury/49932"
+          },
+          {
+            "start": "00:00",
+            "end": "01:00",
+            "name": "The Armed",
+            "url": "https://www.bestkeptsecret.nl/program/the-armed/49851"
+          },
+          {
+            "start": "01:30",
+            "end": "04:00",
+            "name": "Iconic (Queer Pop)",
+            "url": "https://www.bestkeptsecret.nl/program/iconic-queer-pop/60716"
+          }
+        ],
+        "floor": [
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "Joost Oomen (DJ set & action poetry)",
+            "url": "https://www.bestkeptsecret.nl/program/joost-oomen-dj-set-action-poetry/60448"
+          },
+          {
+            "start": "18:30",
+            "end": "19:30",
+            "name": "Cami Layé Okún",
+            "url": "https://www.bestkeptsecret.nl/program/cami-laye-okun/60256"
+          },
+          {
+            "start": "20:00",
+            "end": "21:00",
+            "name": "St. Paul (without the Broken Bones) B2B St. Paul",
+            "url": "https://www.bestkeptsecret.nl/program/st-paul-the-broken-bones-b2b-st-paul/60259"
+          },
+          {
+            "start": "21:00",
+            "end": "22:00",
+            "name": "Sammy Virji",
+            "url": "https://www.bestkeptsecret.nl/program/sammy-virji/60262"
+          },
+          {
+            "start": "22:30",
+            "end": "23:30",
+            "name": "Left of the Dial (DJ set)",
+            "url": "https://www.bestkeptsecret.nl/program/left-of-the-dial-dj-set/60265"
+          },
+          {
+            "start": "00:00",
+            "end": "01:00",
+            "name": "Shug La Sheedah (history of hip hop)",
+            "url": "https://www.bestkeptsecret.nl/program/shug-la-sheedah-history-of-hip-hop/50203"
+          },
+          {
+            "start": "01:30",
+            "end": "02:30",
+            "name": "Nadiem Shah",
+            "url": "https://www.bestkeptsecret.nl/program/nadiem-shah/50219"
+          }
+        ],
+        "casbah": [
+          {
+            "start": "15:15",
+            "end": "16:00",
+            "name": "Texoprint",
+            "url": "https://www.bestkeptsecret.nl/program/kalaallit-nunaat/49869"
+          },
+          {
+            "start": "17:30",
+            "end": "18:15",
+            "name": "Chastity Belt",
+            "url": "https://www.bestkeptsecret.nl/program/chastity-belt/49929"
+          },
+          {
+            "start": "19:30",
+            "end": "20:15",
+            "name": "Upchuck",
+            "url": "https://www.bestkeptsecret.nl/program/upchuck/51460"
+          },
+          {
+            "start": "21:30",
+            "end": "22:15",
+            "name": "Vals Alarm",
+            "url": "https://www.bestkeptsecret.nl/program/vals-alarm/60186"
+          },
+          {
+            "start": "23:30",
+            "end": "00:15",
+            "name": "Snõõper",
+            "url": "https://www.bestkeptsecret.nl/program/snooper/49841"
+          },
+          {
+            "start": "00:15",
+            "end": "04:00",
+            "name": "Here's the Thing DJ's"
+          }
+        ],
+        "coney-island": [
+          {
+            "start": "16:00",
+            "end": "18:00",
+            "name": "DJ Tracksuit",
+            "url": "https://www.bestkeptsecret.nl/program/dj-tracksuit/50225"
+          },
+          {
+            "start": "18:00",
+            "end": "20:00",
+            "name": "Joiah",
+            "url": "https://www.bestkeptsecret.nl/program/joiah/50709"
+          },
+          {
+            "start": "20:00",
+            "end": "22:00",
+            "name": "Sennes",
+            "url": "https://www.bestkeptsecret.nl/program/sennes/60239"
+          },
+          {
+            "start": "22:00",
+            "end": "00:00",
+            "name": "Berkan V8",
+            "url": "https://www.bestkeptsecret.nl/program/berkan-v8/50713"
+          },
+          {
+            "start": "00:00",
+            "end": "02:00",
+            "name": "Black Rave Culture",
+            "url": "https://www.bestkeptsecret.nl/program/black-rave-culture/51395"
+          },
+          {
+            "start": "02:00",
+            "end": "04:00",
+            "name": "Cashu",
+            "url": "https://www.bestkeptsecret.nl/program/cashu/51402"
+          }
+        ],
+        "muziekgieterij": [
+          {
+            "start": "15:00",
+            "end": "16:00",
+            "name": "Session 1 (TBA)"
+          },
+          {
+            "start": "17:15",
+            "end": "18:15",
+            "name": "Session 2 (TBA)"
+          },
+          {
+            "start": "19:30",
+            "end": "20:15",
+            "name": "Ise",
+            "url": "https://www.bestkeptsecret.nl/program/ise/60642"
+          },
+          {
+            "start": "21:45",
+            "end": "22:30",
+            "name": "Droom Dit",
+            "url": "https://www.bestkeptsecret.nl/program/droom-dit/51471"
+          }
+        ]
+      }
+    },
+    {
+      "id": "saturday",
+      "name": "Saturday",
+      "date": "2024-06-08",
+      "events": {
+        "one": [
+          {
+            "start": "16:00",
+            "end": "17:00",
+            "name": "Merol",
+            "url": "https://www.bestkeptsecret.nl/program/merol/60190"
+          },
+          {
+            "start": "18:00",
+            "end": "19:00",
+            "name": "Fatoumata Diawara",
+            "url": "https://www.bestkeptsecret.nl/program/fatoumata-diawara/49789"
+          },
+          {
+            "start": "20:00",
+            "end": "21:00",
+            "name": "Parcels",
+            "url": "https://www.bestkeptsecret.nl/program/parcels/49828"
+          },
+          {
+            "start": "22:00",
+            "end": "00:00",
+            "name": "Paolo Nutini",
+            "url": "https://www.bestkeptsecret.nl/program/paolo-nutini/51425"
+          }
+        ],
+        "two": [
+          {
+            "start": "12:00",
+            "end": "12:45",
+            "name": "The Amazons",
+            "url": "https://www.bestkeptsecret.nl/program/the-amazons/51447"
+          },
+          {
+            "start": "13:30",
+            "end": "14:15",
+            "name": "CMAT",
+            "url": "https://www.bestkeptsecret.nl/program/cmat/60206"
+          },
+          {
+            "start": "15:00",
+            "end": "16:00",
+            "name": "Royel Otis",
+            "url": "https://www.bestkeptsecret.nl/program/royel-otis/51431"
+          },
+          {
+            "start": "17:00",
+            "end": "18:00",
+            "name": "Tramhaus",
+            "url": "https://www.bestkeptsecret.nl/program/tramhaus/49857"
+          },
+          {
+            "start": "19:00",
+            "end": "20:00",
+            "name": "Vince Staples",
+            "url": "https://www.bestkeptsecret.nl/program/vince-staples/51463"
+          },
+          {
+            "start": "21:00",
+            "end": "22:10",
+            "name": "Slowdive",
+            "url": "https://www.bestkeptsecret.nl/program/slowdive/49838"
+          },
+          {
+            "start": "00:00",
+            "end": "01:00",
+            "name": "Altin Gün",
+            "url": "https://www.bestkeptsecret.nl/program/altin-gun/51386"
+          }
+        ],
+        "secret": [
+          {
+            "start": "12:15",
+            "end": "13:00",
+            "name": "Ratboys",
+            "url": "https://www.bestkeptsecret.nl/program/ratboys/51428"
+          },
+          {
+            "start": "13:30",
+            "end": "14:15",
+            "name": "Grace Cummings",
+            "url": "https://www.bestkeptsecret.nl/program/grace-cummings/51411"
+          },
+          {
+            "start": "15:00",
+            "end": "15:45",
+            "name": "Etran de L'Aïr",
+            "url": "https://www.bestkeptsecret.nl/program/etran-de-lair/49782"
+          },
+          {
+            "start": "16:30",
+            "end": "17:15",
+            "name": "Infinity Song",
+            "url": "https://www.bestkeptsecret.nl/program/infinity-song/60209"
+          },
+          {
+            "start": "18:00",
+            "end": "18:45",
+            "name": "Mildlife",
+            "url": "https://www.bestkeptsecret.nl/program/mildlife/49814"
+          },
+          {
+            "start": "19:30",
+            "end": "20:15",
+            "name": "The Mary Wallopers",
+            "url": "https://www.bestkeptsecret.nl/program/the-mary-wallopers/51449"
+          },
+          {
+            "start": "21:00",
+            "end": "21:45",
+            "name": "Mula B",
+            "url": "https://www.bestkeptsecret.nl/program/mula-b-band/49934"
+          },
+          {
+            "start": "22:30",
+            "end": "23:15",
+            "name": "Lambrini Girls",
+            "url": "https://www.bestkeptsecret.nl/program/lambrini-girls/60203"
+          },
+          {
+            "start": "00:00",
+            "end": "01:00",
+            "name": "Osees",
+            "url": "https://www.bestkeptsecret.nl/program/osees/49822"
+          },
+          {
+            "start": "01:30",
+            "end": "04:00",
+            "name": "Tjade",
+            "url": "https://www.bestkeptsecret.nl/program/tjade/51457"
+          }
+        ],
+        "floor": [
+          {
+            "start": "13:00",
+            "end": "14:00",
+            "name": "Ararat Taxi Service",
+            "url": "https://www.bestkeptsecret.nl/program/ararat-taxi-service/60267"
+          },
+          {
+            "start": "15:00",
+            "end": "16:00",
+            "name": "Roxeanne Hazes (DJ set)",
+            "url": "https://www.bestkeptsecret.nl/program/roxeanne-hazes-dj-set/60270"
+          },
+          {
+            "start": "17:00",
+            "end": "18:00",
+            "name": "Julie Pavon (live)",
+            "url": "https://www.bestkeptsecret.nl/program/julie-pavon-live/60480"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Malou",
+            "url": "https://www.bestkeptsecret.nl/program/malou/60280"
+          },
+          {
+            "start": "21:00",
+            "end": "22:00",
+            "name": "Joes Brauers (Dutch Masters DJ set)",
+            "url": "https://www.bestkeptsecret.nl/program/joes-brauers-dutch-masters-dj-set/60275"
+          },
+          {
+            "start": "23:00",
+            "end": "00:00",
+            "name": "Chewchew",
+            "url": "https://www.bestkeptsecret.nl/program/chew-chew/50200"
+          },
+          {
+            "start": "00:30",
+            "end": "01:30",
+            "name": "Coco Bryce",
+            "url": "https://www.bestkeptsecret.nl/program/coco-bryce/60277"
+          },
+          {
+            "start": "02:00",
+            "end": "03:00",
+            "name": "Perfect Indie Disco: St. Paul B2B Vera Siemons",
+            "url": "https://www.bestkeptsecret.nl/program/perfect-indie-disco-st-paul-b2b-vera-siemons/60283"
+          }
+        ],
+        "casbah": [
+          {
+            "start": "14:00",
+            "end": "14:45",
+            "name": "T.B.A."
+          },
+          {
+            "start": "16:00",
+            "end": "16:45",
+            "name": "Cherry Glazerr",
+            "url": "https://www.bestkeptsecret.nl/program/cherry-glazerr/51475"
+          },
+          {
+            "start": "18:00",
+            "end": "18:45",
+            "name": "Yhwh Nailgun",
+            "url": "https://www.bestkeptsecret.nl/program/yhwh-nailgun/49936"
+          },
+          {
+            "start": "20:00",
+            "end": "20:45",
+            "name": "Library Card",
+            "url": "https://www.bestkeptsecret.nl/program/library-card/49877"
+          },
+          {
+            "start": "22:00",
+            "end": "22:45",
+            "name": "Faux Real",
+            "url": "https://www.bestkeptsecret.nl/program/faux-real/51408"
+          },
+          {
+            "start": "00:00",
+            "end": "00:45",
+            "name": "Deijuvhs",
+            "url": "https://www.bestkeptsecret.nl/program/deijuvhs/51405"
+          },
+          {
+            "start": "00:45",
+            "end": "04:00",
+            "name": "Loose Ends DJ's"
+          }
+        ],
+        "coney-island": [
+          {
+            "start": "16:00",
+            "end": "18:00",
+            "name": "Loradeniz",
+            "url": "https://www.bestkeptsecret.nl/program/loradeniz/60233"
+          },
+          {
+            "start": "18:00",
+            "end": "20:00",
+            "name": "Askmelater",
+            "url": "https://www.bestkeptsecret.nl/program/askmelater/50725"
+          },
+          {
+            "start": "20:00",
+            "end": "22:00",
+            "name": "Lenxi (hybrid live)",
+            "url": "https://www.bestkeptsecret.nl/program/lenxi-hybrid-live/60228"
+          },
+          {
+            "start": "22:00",
+            "end": "00:00",
+            "name": "Passion Deez",
+            "url": "https://www.bestkeptsecret.nl/program/passion-deez/50729"
+          },
+          {
+            "start": "00:00",
+            "end": "02:00",
+            "name": "Blck Mamba",
+            "url": "https://www.bestkeptsecret.nl/program/blck-mamba/51399"
+          },
+          {
+            "start": "02:00",
+            "end": "04:00",
+            "name": "Bambii",
+            "url": "https://www.bestkeptsecret.nl/program/bambii/51389"
+          }
+        ],
+        "muziekgieterij": [
+          {
+            "start": "13:00",
+            "end": "14:00",
+            "name": "Session 1 (TBA)"
+          },
+          {
+            "start": "15:00",
+            "end": "16:00",
+            "name": "Session 2 (TBA)"
+          },
+          {
+            "start": "17:00",
+            "end": "18:00",
+            "name": "Session 3 (TBA)"
+          },
+          {
+            "start": "19:15",
+            "end": "20:00",
+            "name": "Lézard",
+            "url": "https://www.bestkeptsecret.nl/program/lezard/60249"
+          },
+          {
+            "start": "21:30",
+            "end": "22:15",
+            "name": "Porcelain ID",
+            "url": "https://www.bestkeptsecret.nl/program/porcelain-id/51478"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sunday",
+      "name": "Sunday",
+      "date": "2024-06-09",
+      "events": {
+        "one": [
+          {
+            "start": "15:30",
+            "end": "16:30",
+            "name": "Warhaus",
+            "url": "https://www.bestkeptsecret.nl/program/warhaus/49860"
+          },
+          {
+            "start": "17:30",
+            "end": "18:30",
+            "name": "De Jeugd van Tegenwoordig",
+            "url": "https://www.bestkeptsecret.nl/program/de-jeugd-van-tegenwoordig/49767"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Tamino",
+            "url": "https://www.bestkeptsecret.nl/program/tamino/49848"
+          },
+          {
+            "start": "22:00",
+            "end": "23:15",
+            "name": "Justice",
+            "url": "https://www.bestkeptsecret.nl/program/justice/49799"
+          }
+        ],
+        "two": [
+          {
+            "start": "12:00",
+            "end": "12:45",
+            "name": "T.B.A."
+          },
+          {
+            "start": "13:15",
+            "end": "14:00",
+            "name": "The Indien",
+            "url": "https://www.bestkeptsecret.nl/program/the-indien/50826"
+          },
+          {
+            "start": "14:45",
+            "end": "15:30",
+            "name": "Jockstrap",
+            "url": "https://www.bestkeptsecret.nl/program/jockstrap/51416"
+          },
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "The Haunted Youth",
+            "url": "https://www.bestkeptsecret.nl/program/the-haunted-youth/50822"
+          },
+          {
+            "start": "18:30",
+            "end": "19:30",
+            "name": "Amyl & the Sniffers",
+            "url": "https://www.bestkeptsecret.nl/program/amyl-the-sniffers/49759"
+          },
+          {
+            "start": "20:30",
+            "end": "21:45",
+            "name": "PJ Harvey",
+            "url": "https://www.bestkeptsecret.nl/program/pj-harvey/49832"
+          },
+          {
+            "start": "23:15",
+            "end": "00:15",
+            "name": "Floating Points",
+            "url": "https://www.bestkeptsecret.nl/program/floating-points/49791"
+          }
+        ],
+        "secret": [
+          {
+            "start": "12:00",
+            "end": "12:45",
+            "name": "Thandii",
+            "url": "https://www.bestkeptsecret.nl/program/thandii/60221"
+          },
+          {
+            "start": "13:15",
+            "end": "14:00",
+            "name": "Julie Byrne",
+            "url": "https://www.bestkeptsecret.nl/program/julie-byrne/49794"
+          },
+          {
+            "start": "14:30",
+            "end": "15:15",
+            "name": "Water from Your Eyes",
+            "url": "https://www.bestkeptsecret.nl/program/water-from-your-eyes/49866"
+          },
+          {
+            "start": "16:00",
+            "end": "16:45",
+            "name": "The Mysterines",
+            "url": "https://www.bestkeptsecret.nl/program/the-mysterines/49863"
+          },
+          {
+            "start": "17:30",
+            "end": "18:15",
+            "name": "Slow Pulp",
+            "url": "https://www.bestkeptsecret.nl/program/slow-pulp/49835"
+          },
+          {
+            "start": "19:00",
+            "end": "19:45",
+            "name": "Paris Paloma",
+            "url": "https://www.bestkeptsecret.nl/program/paris-paloma/60196"
+          },
+          {
+            "start": "20:30",
+            "end": "21:15",
+            "name": "Dorian Electra",
+            "url": "https://www.bestkeptsecret.nl/program/dorian-electra/49775"
+          },
+          {
+            "start": "22:00",
+            "end": "23:00",
+            "name": "Billy Woods",
+            "url": "https://www.bestkeptsecret.nl/program/billy-woods/51392"
+          },
+          {
+            "start": "23:45",
+            "end": "00:30",
+            "name": "Coloray",
+            "url": "https://www.bestkeptsecret.nl/program/coloray/60647"
+          }
+        ],
+        "floor": [
+          {
+            "start": "13:00",
+            "end": "14:00",
+            "name": "Library Card (DJ set)",
+            "url": "https://www.bestkeptsecret.nl/program/library-card-dj-set/50216"
+          },
+          {
+            "start": "15:00",
+            "end": "16:00",
+            "name": "Dokter Moon B2B Dochter Moon",
+            "url": "https://www.bestkeptsecret.nl/program/dokter-moon-b2b-dochter-moon/50206"
+          },
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "Hauptgast",
+            "url": "https://www.bestkeptsecret.nl/program/hauptgast/50193"
+          },
+          {
+            "start": "18:00",
+            "end": "19:00",
+            "name": "Unruly Phoenix (3 step set)",
+            "url": "https://www.bestkeptsecret.nl/program/unruly-phoenix-3-step-set/50213"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Phillipi (Deewee)",
+            "url": "https://www.bestkeptsecret.nl/program/phillipi-deewee/50209"
+          },
+          {
+            "start": "21:00",
+            "end": "22:00",
+            "name": "The Glimmers",
+            "url": "https://www.bestkeptsecret.nl/program/the-glimmers/50196"
+          },
+          {
+            "start": "22:30",
+            "end": "23:30",
+            "name": "Pelanoir",
+            "url": "https://www.bestkeptsecret.nl/program/pelanoir/60285"
+          }
+        ],
+        "casbah": [
+          {
+            "start": "14:00",
+            "end": "14:45",
+            "name": "Ada Oda",
+            "url": "https://www.bestkeptsecret.nl/program/ada-oda/60215"
+          },
+          {
+            "start": "16:00",
+            "end": "16:45",
+            "name": "Hiqpy",
+            "url": "https://www.bestkeptsecret.nl/program/hiqpy/60193"
+          },
+          {
+            "start": "18:00",
+            "end": "18:45",
+            "name": "Ali",
+            "url": "https://www.bestkeptsecret.nl/program/ali/60212"
+          },
+          {
+            "start": "20:00",
+            "end": "20:45",
+            "name": "Gurriers",
+            "url": "https://www.bestkeptsecret.nl/program/gurriers/60200"
+          },
+          {
+            "start": "22:00",
+            "end": "22:45",
+            "name": "Sprints",
+            "url": "https://www.bestkeptsecret.nl/program/sprints/51440"
+          }
+        ],
+        "coney-island": [
+          {
+            "start": "16:00",
+            "end": "18:00",
+            "name": "Lola Edo",
+            "url": "https://www.bestkeptsecret.nl/program/lola-edo/50717"
+          },
+          {
+            "start": "18:00",
+            "end": "20:00",
+            "name": "Teqmun",
+            "url": "https://www.bestkeptsecret.nl/program/teqmun/60241"
+          },
+          {
+            "start": "20:00",
+            "end": "22:00",
+            "name": "Naone",
+            "url": "https://www.bestkeptsecret.nl/program/naone/60236"
+          },
+          {
+            "start": "22:00",
+            "end": "00:00",
+            "name": "French II",
+            "url": "https://www.bestkeptsecret.nl/program/french-ii/50721"
+          }
+        ],
+        "muziekgieterij": [
+          {
+            "start": "12:30",
+            "end": "13:30",
+            "name": "Session 1 (TBA)"
+          },
+          {
+            "start": "14:30",
+            "end": "15:30",
+            "name": "Session 2 (TBA)"
+          },
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "Session 3 (TBA)"
+          },
+          {
+            "start": "18:30",
+            "end": "19:15",
+            "name": "Affaire",
+            "url": "https://www.bestkeptsecret.nl/program/affaire/60244"
+          },
+          {
+            "start": "21:15",
+            "end": "22:00",
+            "name": "néomí",
+            "url": "https://www.bestkeptsecret.nl/program/neomi/60252"
+          }
+        ]
+      }
+    }
+  ]
+}
