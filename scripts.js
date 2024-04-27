@@ -4,32 +4,63 @@ let enabledStageIds = [];
 const blockHeightMinutes = 30;
 const blockHeight = 100;
 
+class Schedule {
+  constructor(stages, schedule) {
+    this.stages = stages;
+    this.schedule = schedule;
+  }
+
+  getDayIds() {
+    return this.schedule.map((day) => day.id);
+  }
+
+  getStageIds(dayId) {
+    if (dayId === undefined) {
+      return this.stages.map((stage) => stage.id);
+    } else {
+      return Object.keys(this.schedule.find((day) => day.id === dayId).events);
+    }
+  }
+
+  getStage(stageId) {
+    return this.stages.find((stage) => stage.id === stageId);
+  }
+
+  getEvents(dayId, stageId) {
+    return this.schedule.find((day) => day.id === dayId).events[stageId];
+  }
+
+  static async fetch(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    const stages = data.stages;
+    const schedule = data.schedule;
+    return new Schedule(stages, schedule);
+  }
+}
+
 async function main() {
-  const [stages, schedule] = await fetchSchedule("schedule.json");
+  const [stages, scheduleOld] = await fetchSchedule("schedule.json");
+  const schedule = await Schedule.fetch("schedule.json");
 
   enabledStageIds = stages.map((stage) => stage.id);
 
-  const blockSchedules = generateBlockSchedules(stages, schedule);
+  const blockSchedules = generateBlockSchedules(schedule);
 
-  populateDays(schedule, stages, blockSchedules);
+  populateDays(scheduleOld, stages, blockSchedules);
 
-  showDay(schedule, stages, blockSchedules, schedule[0].id);
+  showDay(scheduleOld, stages, blockSchedules, scheduleOld[0].id);
 }
 
-function generateBlockSchedules(stages, schedule) {
+function generateBlockSchedules(schedule) {
   const blockSchedules = {};
-  for (const day of schedule) {
-    blockSchedules[day.id] = {};
-    for (const stageId in day.events) {
-      const stageSchedule = day.events[stageId];
-      const stage = stages.find((s) => s.id === stageId);
-      const svg = generateStageBlockSchedule(
-        stageSchedule,
-        stage,
-        "12:00",
-        "04:00",
-      );
-      blockSchedules[day.id][stageId] = svg;
+  for (const dayId of schedule.getDayIds()) {
+    blockSchedules[dayId] = {};
+    for (const stageId of schedule.getStageIds(dayId)) {
+      const events = schedule.getEvents(dayId, stageId);
+      const stage = schedule.getStage(stageId);
+      const svg = generateStageBlockSchedule(events, stage, "12:00", "04:00");
+      blockSchedules[dayId][stageId] = svg;
     }
   }
   return blockSchedules;
