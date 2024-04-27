@@ -69,36 +69,6 @@ function generateStageBlockSchedule(
   svg.setAttribute("height", blockHeight);
   svg.setAttribute("width", (range / blockHeightMinutes) * blockHeight);
 
-  const style = createSvgElement("style", {});
-  style.textContent = `
-    rect:hover {
-      opacity: 0.5;
-    }
-
-    foreignObject {
-      pointer-events: none;
-    }
-
-    div.block {
-      font-size: 6px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-    }
-
-    div.block > div {
-      text-align: center;
-    }
-
-    div.time {
-      font-size: 0.75em;
-    }
-  `;
-  svg.appendChild(style);
-
   for (const event of schedule) {
     const eventStartMinutes = parseTime(event.start);
     const eventEndMinutes = parseTime(event.end);
