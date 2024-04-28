@@ -115,9 +115,13 @@ class StageSchedule {
   static #HEIGHT = 100;
   // The stroke colour for the blocks, mainly useful when events are directly
   // adjacent to each other.
-  static #STROKE_COLOUR = "white";
+  static #BLOCK_STROKE_COLOUR = "white";
   // The stroke with for the blocks.
-  static #STROKE_WIDTH = 0.5;
+  static #BLOCK_STROKE_WIDTH = 0.5;
+  // The stroke colour for the hour lines.
+  static #HOUR_LINE_STROKE_COLOUR = "#eee";
+  // The stroke width for the hour lines.
+  static #HOUR_LINE_STROKE_WIDTH = 0.5;
 
   #svg;
   #rangeInMinutes;
@@ -164,11 +168,27 @@ class StageSchedule {
     // Create a root SVG element for each block schedule.
     const svg = createSvgElement("svg");
 
-    // Create groups for blocks and text.
+    // Create groups for blocks, hour lines and text.
+    const gHourLines = createSvgElement("g", {});
     const gBlocks = createSvgElement("g", {});
     const gText = createSvgElement("g", {});
+    svg.appendChild(gHourLines);
     svg.appendChild(gBlocks);
     svg.appendChild(gText);
+
+    // Create a vertical line for each hour, just create all the lines we may
+    // possibly show: from 00:00 until 00:00 the next day.
+    for (let minute = 0; minute < 48 * 60; minute += 60) {
+      const line = createSvgElement("line", {
+        x1: minute,
+        y1: 0,
+        x2: minute,
+        y2: StageSchedule.#BLOCK_HEIGHT_MINUTES,
+        stroke: StageSchedule.#HOUR_LINE_STROKE_COLOUR,
+        "stroke-width": StageSchedule.#HOUR_LINE_STROKE_WIDTH,
+      });
+      gHourLines.appendChild(line);
+    }
 
     // Create blocks for each event, coordinates are in minutes from 00:00
     // today. Note: any events after midnight (i.e. 00:00 the next day), are
@@ -184,8 +204,8 @@ class StageSchedule {
         width: width,
         height: StageSchedule.#BLOCK_HEIGHT_MINUTES,
         fill: stageColour,
-        stroke: StageSchedule.#STROKE_COLOUR,
-        "stroke-width": StageSchedule.#STROKE_WIDTH,
+        stroke: StageSchedule.#BLOCK_STROKE_COLOUR,
+        "stroke-width": StageSchedule.#BLOCK_STROKE_WIDTH,
       });
       rect.classList.add("block");
       if (event.url) {
