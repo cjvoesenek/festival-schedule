@@ -46,11 +46,11 @@ class Schedule {
   }
 }
 
-// Block schedule class.
+// Stage schedule class.
 //
 // This class represents a block schedule for a single stage on a single day as
 // an SVG element.
-class BlockSchedule {
+class StageSchedule {
   // The height of each block in "minutes", to determine the aspect ratio of the
   // blocks.
   static #BLOCK_HEIGHT_MINUTES = 30;
@@ -80,12 +80,12 @@ class BlockSchedule {
 
     this.#svg.setAttribute(
       "viewBox",
-      `${startMinutes} 0 ${width} ${BlockSchedule.#BLOCK_HEIGHT_MINUTES}`,
+      `${startMinutes} 0 ${width} ${StageSchedule.#BLOCK_HEIGHT_MINUTES}`,
     );
     this.#svg.setAttribute("height", blockHeight);
     this.#svg.setAttribute(
       "width",
-      (width / BlockSchedule.#BLOCK_HEIGHT_MINUTES) * BlockSchedule.#HEIGHT,
+      (width / StageSchedule.#BLOCK_HEIGHT_MINUTES) * StageSchedule.#HEIGHT,
     );
   }
 
@@ -119,10 +119,10 @@ class BlockSchedule {
         x: xStart,
         y: 0,
         width: width,
-        height: BlockSchedule.#BLOCK_HEIGHT_MINUTES,
+        height: StageSchedule.#BLOCK_HEIGHT_MINUTES,
         fill: stageColour,
-        stroke: BlockSchedule.#STROKE_COLOUR,
-        "stroke-width": BlockSchedule.#STROKE_WIDTH,
+        stroke: StageSchedule.#STROKE_COLOUR,
+        "stroke-width": StageSchedule.#STROKE_WIDTH,
       });
       rect.classList.add("block");
       if (event.url) {
@@ -139,7 +139,7 @@ class BlockSchedule {
         x: xStart,
         y: 0,
         width: width,
-        height: BlockSchedule.#BLOCK_HEIGHT_MINUTES,
+        height: StageSchedule.#BLOCK_HEIGHT_MINUTES,
       });
       foreignObject.classList.add("block-text");
       // Create wrapping flexbox div to layout the artist name and time.
@@ -161,7 +161,7 @@ class BlockSchedule {
       gText.appendChild(foreignObject);
     }
 
-    return new BlockSchedule(svg);
+    return new StageSchedule(svg);
   }
 }
 
@@ -210,7 +210,7 @@ function generateBlockSchedules(schedule) {
   for (const dayId of schedule.getDayIds()) {
     blockSchedules[dayId] = {};
     for (const stageId of schedule.getStageIds(dayId)) {
-      blockSchedules[dayId][stageId] = BlockSchedule.fromSchedule(
+      blockSchedules[dayId][stageId] = StageSchedule.fromSchedule(
         schedule,
         dayId,
         stageId,
