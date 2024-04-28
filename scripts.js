@@ -326,6 +326,9 @@ class App {
     this.#dayId = schedule.getDayIds()[0];
     this.#enabledStageIds = schedule.getStageIds();
 
+    // If present, load the state from local storage.
+    this.#loadState();
+
     this.#dayElements = new Map();
     this.#stageElements = new Map();
 
@@ -338,6 +341,23 @@ class App {
       this.#dayId,
       this.#enabledStageIds,
     );
+  }
+
+  // Saves the day and enabled stages to local storage.
+  #saveState() {
+    localStorage.setItem("dayId", this.#dayId);
+    localStorage.setItem(
+      "enabledStageIds",
+      JSON.stringify(this.#enabledStageIds),
+    );
+  }
+
+  // If present, loads the day and enabled stages from local storage.
+  #loadState() {
+    const dayId = localStorage.getItem("dayId");
+    if (dayId) this.#dayId = dayId;
+    const enabledStageIds = localStorage.getItem("enabledStageIds");
+    if (enabledStageIds) this.#enabledStageIds = JSON.parse(enabledStageIds);
   }
 
   // Populates the days container with days.
@@ -403,6 +423,8 @@ class App {
     // Update the stages and the block schedule.
     this.#populateStages();
     this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
+
+    this.#saveState();
   }
 
   #toggleStageId(stageId) {
@@ -416,6 +438,8 @@ class App {
     // Repopulate the stages control and update the block schedule.
     this.#populateStages();
     this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
+
+    this.#saveState();
   }
 }
 
