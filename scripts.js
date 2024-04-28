@@ -1,8 +1,41 @@
-main();
+// Helper functions
 
-let enabledStageIds = [];
-const blockHeightMinutes = 30;
-const blockHeight = 100;
+// Creates an element in a namespace with attributes.
+function createElement(tag, ns, attributes) {
+  const el = document.createElementNS(ns, tag);
+  if (attributes) {
+    for (const [key, value] of Object.entries(attributes)) {
+      el.setAttribute(key, value);
+    }
+  }
+  return el;
+}
+
+// Creates an SVG element with attributes.
+function createSvgElement(tag, attributes) {
+  return createElement(tag, "http://www.w3.org/2000/svg", attributes);
+}
+
+// Creates an XHTML element with attributes.
+function createXhtmlElement(tag, attributes) {
+  return createElement(tag, "http://www.w3.org/1999/xhtml", attributes);
+}
+
+// Clears all children from an element.
+function clearContainer(container) {
+  while (container.children.length > 0) {
+    container.removeChild(container.lastChild);
+  }
+}
+
+// Parses a time string in the format "HH:MM" and returns the number of minutes.
+function computeNumMinutes(time) {
+  let [hours, minutes] = time.split(":").map((x) => parseInt(x));
+  if (hours < 12) {
+    hours += 24;
+  }
+  return hours * 60 + minutes;
+}
 
 // Festival schedule class.
 //
@@ -37,6 +70,17 @@ class Schedule {
     return this.#schedule.find((day) => day.id === dayId).events[stageId];
   }
 
+  getRangeInMinutes(dayId, stageId) {
+    const events = this.getEvents(dayId, stageId);
+    const startMinutes = Math.min(
+      ...events.map((event) => computeNumMinutes(event.start)),
+    );
+    const endMinutes = Math.max(
+      ...events.map((event) => computeNumMinutes(event.end)),
+    );
+    return [startMinutes, endMinutes];
+  }
+
   static async fetch(url) {
     const response = await fetch(url);
     const data = await response.json();
@@ -63,13 +107,19 @@ class StageSchedule {
   static #STROKE_WIDTH = 0.5;
 
   #svg;
+  #rangeInMinutes;
 
-  constructor(svg) {
+  constructor(svg, rangeInMinutes) {
     this.#svg = svg;
+    this.#rangeInMinutes = rangeInMinutes;
   }
 
   get svg() {
     return this.#svg;
+  }
+
+  get rangeInMinutes() {
+    return this.#rangeInMinutes;
   }
 
   // Clips the SVG to a specific range of minutes.
@@ -82,7 +132,7 @@ class StageSchedule {
       "viewBox",
       `${startMinutes} 0 ${width} ${StageSchedule.#BLOCK_HEIGHT_MINUTES}`,
     );
-    this.#svg.setAttribute("height", blockHeight);
+    this.#svg.setAttribute("height", StageSchedule.#HEIGHT);
     this.#svg.setAttribute(
       "width",
       (width / StageSchedule.#BLOCK_HEIGHT_MINUTES) * StageSchedule.#HEIGHT,
@@ -161,179 +211,111 @@ class StageSchedule {
       gText.appendChild(foreignObject);
     }
 
-    return new StageSchedule(svg);
+    // Finally, compute the start end end time in minutes for this day/stage
+    // combination.
+    const rangeInMinutes = schedule.getRangeInMinutes(dayId, stageId);
+
+    return new StageSchedule(svg, rangeInMinutes);
   }
 }
 
-// Helper functions
-function createElement(tag, ns, attributes) {
-  const el = document.createElementNS(ns, tag);
-  if (attributes) {
-    for (const [key, value] of Object.entries(attributes)) {
-      el.setAttribute(key, value);
+// Block schedule class.
+//
+// This class represents a block schedule for a single day, for a certain
+// selection of stages.
+class BlockSchedule {
+  #container;
+  #stageSchedules;
+  #dayId;
+  #enabledStageIds;
+
+  constructor(container, schedule, dayId, enabledStageIds) {
+    this.#container = container;
+    this.#stageSchedules = this.#generateStageSchedules(schedule);
+    this.#dayId = dayId;
+    this.#enabledStageIds = [...enabledStageIds];
+    this.#updateBlockSchedule();
+  }
+
+  setDayId(dayId) {
+    this.#dayId = dayId;
+    this.#updateBlockSchedule();
+  }
+
+  toggleStageId(stageId) {
+    if (this.#enabledStageIds.includes(stageId)) {
+      this.#enabledStageIds = this.#enabledStageIds.filter(
+        (id) => id !== stageId,
+      );
+    } else {
+      this.#enabledStageIds.push(stageId);
+    }
+    this.#updateBlockSchedule();
+  }
+
+  #generateStageSchedules(schedule) {
+    const stageSchedules = new Map();
+    for (const dayId of schedule.getDayIds()) {
+      stageSchedules.set(dayId, new Map());
+      for (const stageId of schedule.getStageIds(dayId)) {
+        stageSchedules
+          .get(dayId)
+          .set(stageId, StageSchedule.fromSchedule(schedule, dayId, stageId));
+      }
+    }
+    return stageSchedules;
+  }
+
+  #updateBlockSchedule() {
+    // Clip the block schedule to the start and end of the current selection of
+    // day and stages.
+    const [startMinutes, endMinutes] = this.#computeCurrentRangeInMinutes();
+
+    clearContainer(this.#container);
+    const stageSchedules = this.#stageSchedules.get(this.#dayId);
+    for (const stageId of this.#enabledStageIds) {
+      const hasStageSchedule = stageSchedules.has(stageId);
+      if (!hasStageSchedule) continue;
+
+      const stageSchedule = stageSchedules.get(stageId);
+      stageSchedule.clip(startMinutes, endMinutes);
+      this.#container.appendChild(stageSchedule.svg);
     }
   }
-  return el;
-}
 
-function createSvgElement(tag, attributes) {
-  return createElement(tag, "http://www.w3.org/2000/svg", attributes);
-}
+  #computeCurrentRangeInMinutes() {
+    const stageSchedules = this.#stageSchedules.get(this.#dayId);
 
-function createXhtmlElement(tag, attributes) {
-  return createElement(tag, "http://www.w3.org/1999/xhtml", attributes);
-}
+    let start = Number.MAX_VALUE;
+    let end = Number.MIN_VALUE;
+    for (const stageId of this.#enabledStageIds) {
+      const hasStageSchedule = stageSchedules.has(stageId);
+      if (!hasStageSchedule) continue;
 
-function computeNumMinutes(time) {
-  let [hours, minutes] = time.split(":").map((x) => parseInt(x));
-  if (hours < 12) {
-    hours += 24;
+      const [startCur, endCur] = this.#stageSchedules
+        .get(this.#dayId)
+        .get(stageId).rangeInMinutes;
+      if (startCur < start) start = startCur;
+      if (endCur > end) end = endCur;
+    }
+    return [start, end];
   }
-  return hours * 60 + minutes;
 }
 
 async function main() {
-  const [stages, scheduleOld] = await fetchSchedule("schedule.json");
   const schedule = await Schedule.fetch("schedule.json");
 
-  enabledStageIds = stages.map((stage) => stage.id);
+  const dayId = schedule.getDayIds()[0];
+  const enabledStageIds = schedule.getStageIds();
 
-  const blockSchedules = generateBlockSchedules(schedule);
-
-  populateDays(scheduleOld, stages, blockSchedules);
-
-  showDay(scheduleOld, stages, blockSchedules, scheduleOld[0].id);
-}
-
-function generateBlockSchedules(schedule) {
-  const blockSchedules = {};
-  for (const dayId of schedule.getDayIds()) {
-    blockSchedules[dayId] = {};
-    for (const stageId of schedule.getStageIds(dayId)) {
-      blockSchedules[dayId][stageId] = StageSchedule.fromSchedule(
-        schedule,
-        dayId,
-        stageId,
-      );
-    }
-  }
-  return blockSchedules;
-}
-
-async function fetchSchedule(url) {
-  const response = await fetch(url);
-  const data = await response.json();
-  const stages = data.stages;
-  const schedule = data.schedule;
-  return [stages, schedule];
-}
-
-function populateDays(schedule, stages, blockSchedules) {
-  const container = document.querySelector("#days");
-
-  for (const day of schedule) {
-    const dayElement = document.createElement("div");
-    dayElement.setAttribute("id", `day-${day.id}`);
-    dayElement.classList.add("day");
-    dayElement.classList.add("inactive");
-    dayElement.textContent = day.name;
-    container.appendChild(dayElement);
-
-    dayElement.addEventListener("click", () =>
-      showDay(schedule, stages, blockSchedules, day.id),
-    );
-  }
-}
-
-function showDay(schedule, stages, blockSchedules, dayId) {
-  const events = schedule.find((d) => d.id === dayId).events;
-  const allStageIds = Object.keys(events);
-
-  const dayElements = document.querySelectorAll(".day");
-  for (const el of dayElements) {
-    if (el.id === `day-${dayId}`) {
-      el.classList.remove("inactive");
-      el.classList.add("active");
-    } else {
-      el.classList.add("inactive");
-      el.classList.remove("active");
-    }
-  }
-
-  populateStages(schedule, blockSchedules[dayId], stages, dayId, allStageIds);
-  populateSchedule(schedule, blockSchedules[dayId], dayId, enabledStageIds);
-}
-
-function populateStages(schedule, blockSchedules, allStages, dayId, stageIds) {
-  const stages = allStages.filter((stage) => stageIds.includes(stage.id));
-
-  const container = document.querySelector("#stages");
-  clearContainer(container);
-
-  for (const stage of stages) {
-    const stageElement = document.createElement("div");
-    stageElement.setAttribute("id", `stage-${stage.id}`);
-    stageElement.classList.add("stage");
-    if (!enabledStageIds.includes(stage.id)) {
-      stageElement.classList.add("disabled");
-    }
-
-    stageElement.style.backgroundColor = stage.colour;
-
-    const stageTextElement = document.createElement("div");
-    stageTextElement.textContent = stage.name;
-
-    stageElement.appendChild(stageTextElement);
-    container.appendChild(stageElement);
-
-    stageElement.addEventListener("click", () =>
-      toggleStage(schedule, blockSchedules, dayId, stage.id),
-    );
-  }
-}
-
-function populateSchedule(schedule, blockSchedules, dayId, stageIds) {
   const container = document.querySelector("#events");
-  clearContainer(container);
-
-  // Recompute start and end time.
-  const daySchedule = schedule.find((d) => d.id === dayId);
-  const selectedStartMinutes = Object.entries(daySchedule.events)
-    .filter(([stageId, _]) => stageIds.includes(stageId))
-    .map(([_, stageSchedule]) => stageSchedule[0].start)
-    .map(computeNumMinutes);
-  const selectedEndMinutes = Object.entries(daySchedule.events)
-    .filter(([stageId, _]) => stageIds.includes(stageId))
-    .map(([_, stageSchedule]) => stageSchedule[stageSchedule.length - 1].end)
-    .map(computeNumMinutes);
-
-  // Find the minimum and maximum, to set in SVG viewboxes.
-  const startMinutes = Math.min(...selectedStartMinutes);
-  const endMinutes = Math.max(...selectedEndMinutes);
-  const range = endMinutes - startMinutes;
-
-  for (const stageId in blockSchedules) {
-    if (!stageIds.includes(stageId)) continue;
-    const blockSchedule = blockSchedules[stageId];
-    blockSchedule.clip(startMinutes, endMinutes);
-    container.appendChild(blockSchedule.svg);
-  }
+  const blockSchedule = new BlockSchedule(
+    container,
+    schedule,
+    dayId,
+    enabledStageIds,
+  );
 }
 
-function toggleStage(schedule, blockSchedules, dayId, stageId) {
-  const el = document.querySelector(`#stage-${stageId}`);
-  if (enabledStageIds.includes(stageId)) {
-    enabledStageIds = enabledStageIds.filter((id) => id !== stageId);
-    el.classList.add("disabled");
-  } else {
-    enabledStageIds.push(stageId);
-    el.classList.remove("disabled");
-  }
-  populateSchedule(schedule, blockSchedules, dayId, enabledStageIds);
-}
-
-function clearContainer(container) {
-  while (container.children.length > 0) {
-    container.removeChild(container.lastChild);
-  }
-}
+// Run the main function.
+main();
