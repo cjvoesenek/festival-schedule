@@ -62,6 +62,19 @@ class Schedule {
     }
   }
 
+  getDays() {
+    return this.#schedule;
+  }
+
+  getStages(dayId) {
+    if (dayId === undefined) {
+      return this.#stages;
+    } else {
+      const stageIds = this.getStageIds(dayId);
+      return this.#stages.filter((stage) => stageIds.includes(stage.id));
+    }
+  }
+
   getStage(stageId) {
     return this.#stages.find((stage) => stage.id === stageId);
   }
@@ -226,31 +239,30 @@ class StageSchedule {
 class BlockSchedule {
   #container;
   #stageSchedules;
-  #dayId;
-  #enabledStageIds;
 
   constructor(container, schedule, dayId, enabledStageIds) {
     this.#container = container;
     this.#stageSchedules = this.#generateStageSchedules(schedule);
-    this.#dayId = dayId;
-    this.#enabledStageIds = [...enabledStageIds];
-    this.#updateBlockSchedule();
+    this.updateBlockSchedule(dayId, enabledStageIds);
   }
 
-  setDayId(dayId) {
-    this.#dayId = dayId;
-    this.#updateBlockSchedule();
-  }
+  updateBlockSchedule(dayId, enabledStageIds) {
+    // Clip the block schedule to the start and end of the current selection of
+    // day and stages.
+    const [startMinutes, endMinutes] = this.#computeCurrentRangeInMinutes(
+      dayId,
+      enabledStageIds,
+    );
 
-  toggleStageId(stageId) {
-    if (this.#enabledStageIds.includes(stageId)) {
-      this.#enabledStageIds = this.#enabledStageIds.filter(
-        (id) => id !== stageId,
-      );
-    } else {
-      this.#enabledStageIds.push(stageId);
+    clearContainer(this.#container);
+    const stageSchedules = this.#stageSchedules.get(dayId);
+    for (const [stageId, stageSchedule] of stageSchedules) {
+      const isEnabled = enabledStageIds.includes(stageId);
+      if (!isEnabled) continue;
+
+      stageSchedule.clip(startMinutes, endMinutes);
+      this.#container.appendChild(stageSchedule.svg);
     }
-    this.#updateBlockSchedule();
   }
 
   #generateStageSchedules(schedule) {
@@ -266,34 +278,17 @@ class BlockSchedule {
     return stageSchedules;
   }
 
-  #updateBlockSchedule() {
-    // Clip the block schedule to the start and end of the current selection of
-    // day and stages.
-    const [startMinutes, endMinutes] = this.#computeCurrentRangeInMinutes();
-
-    clearContainer(this.#container);
-    const stageSchedules = this.#stageSchedules.get(this.#dayId);
-    for (const stageId of this.#enabledStageIds) {
-      const hasStageSchedule = stageSchedules.has(stageId);
-      if (!hasStageSchedule) continue;
-
-      const stageSchedule = stageSchedules.get(stageId);
-      stageSchedule.clip(startMinutes, endMinutes);
-      this.#container.appendChild(stageSchedule.svg);
-    }
-  }
-
-  #computeCurrentRangeInMinutes() {
-    const stageSchedules = this.#stageSchedules.get(this.#dayId);
+  #computeCurrentRangeInMinutes(dayId, enabledStageIds) {
+    const stageSchedules = this.#stageSchedules.get(dayId);
 
     let start = Number.MAX_VALUE;
     let end = Number.MIN_VALUE;
-    for (const stageId of this.#enabledStageIds) {
+    for (const stageId of enabledStageIds) {
       const hasStageSchedule = stageSchedules.has(stageId);
       if (!hasStageSchedule) continue;
 
       const [startCur, endCur] = this.#stageSchedules
-        .get(this.#dayId)
+        .get(dayId)
         .get(stageId).rangeInMinutes;
       if (startCur < start) start = startCur;
       if (endCur > end) end = endCur;
@@ -302,18 +297,140 @@ class BlockSchedule {
   }
 }
 
+// Class representing the application.
+//
+// This class manages the state of the application, including the selected day
+// and stages.
+class App {
+  #daysContainer;
+  #stagesContainer;
+  #eventsContainer;
+  #dayElements;
+  #stageElements;
+
+  #schedule;
+
+  #blockSchedule;
+
+  #dayId;
+  #enabledStageIds;
+
+  constructor(daysContainer, stagesContainer, eventsContainer, schedule) {
+    this.#daysContainer = daysContainer;
+    this.#stagesContainer = stagesContainer;
+    this.#eventsContainer = eventsContainer;
+
+    this.#schedule = schedule;
+
+    // Start with the first day and all stages enabled.
+    this.#dayId = schedule.getDayIds()[0];
+    this.#enabledStageIds = schedule.getStageIds();
+
+    this.#dayElements = new Map();
+    this.#stageElements = new Map();
+
+    this.#populateDays();
+    this.#populateStages();
+
+    this.#blockSchedule = new BlockSchedule(
+      this.#eventsContainer,
+      schedule,
+      this.#dayId,
+      this.#enabledStageIds,
+    );
+  }
+
+  // Populates the days container with days.
+  //
+  // This only has to be called once, so we do not empty the container.
+  #populateDays() {
+    for (const day of this.#schedule.getDays()) {
+      const dayElement = document.createElement("div");
+      dayElement.setAttribute("id", `day-${day.id}`);
+      dayElement.classList.add("day");
+
+      const isSelected = day.id === this.#dayId;
+      dayElement.classList.add(isSelected ? "active" : "inactive");
+      dayElement.textContent = day.name;
+
+      dayElement.addEventListener("click", () => this.#setDayId(day.id));
+
+      this.#dayElements.set(day.id, dayElement);
+      this.#daysContainer.appendChild(dayElement);
+    }
+  }
+
+  // Populates the stages container with stages.
+  //
+  // The available stages may change for each selected day, so this needs to be
+  // called whenever the day changes. Hence, we clear the container first.
+  #populateStages() {
+    clearContainer(this.#stagesContainer);
+
+    for (const stage of this.#schedule.getStages(this.#dayId)) {
+      const stageElement = document.createElement("div");
+      stageElement.setAttribute("id", `stage-${stage.id}`);
+      stageElement.classList.add("stage");
+
+      const isSelected = this.#enabledStageIds.includes(stage.id);
+      stageElement.classList.add(isSelected ? "active" : "inactive");
+
+      stageElement.style.backgroundColor = stage.colour;
+
+      stageElement.addEventListener("click", () =>
+        this.#toggleStageId(stage.id),
+      );
+
+      const stageTextElement = document.createElement("div");
+      stageTextElement.textContent = stage.name;
+
+      stageElement.appendChild(stageTextElement);
+
+      this.#stageElements.set(stage.id, stageElement);
+      this.#stagesContainer.appendChild(stageElement);
+    }
+  }
+
+  #setDayId(dayId) {
+    this.#dayId = dayId;
+
+    // Change the active day.
+    for (const [id, element] of this.#dayElements) {
+      element.classList.remove("active", "inactive");
+      element.classList.add(id === dayId ? "active" : "inactive");
+    }
+
+    // Update the stages and the block schedule.
+    this.#populateStages();
+    this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
+  }
+
+  #toggleStageId(stageId) {
+    if (this.#enabledStageIds.includes(stageId)) {
+      this.#enabledStageIds = this.#enabledStageIds.filter(
+        (id) => id !== stageId,
+      );
+    } else {
+      this.#enabledStageIds.push(stageId);
+    }
+    // Repopulate the stages control and update the block schedule.
+    this.#populateStages();
+    this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
+  }
+}
+
 async function main() {
   const schedule = await Schedule.fetch("schedule.json");
 
-  const dayId = schedule.getDayIds()[0];
-  const enabledStageIds = schedule.getStageIds();
+  const daysContainer = document.querySelector("#days");
+  const stagesContainer = document.querySelector("#stages");
+  const eventsContainer = document.querySelector("#events");
 
-  const container = document.querySelector("#events");
-  const blockSchedule = new BlockSchedule(
-    container,
+  const app = new App(
+    daysContainer,
+    stagesContainer,
+    eventsContainer,
     schedule,
-    dayId,
-    enabledStageIds,
   );
 }
 

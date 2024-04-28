@@ -55,7 +55,7 @@ nav {
   padding: 0.5rem;
 }
 
-.stage.disabled {
+.stage.inactive {
   opacity: 0.5;
 }
 
