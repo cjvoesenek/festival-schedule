@@ -477,7 +477,6 @@ class App {
   #populateDays() {
     for (const day of this.#schedule.getDays()) {
       const dayElement = document.createElement("div");
-      dayElement.setAttribute("id", `day-${day.id}`);
       dayElement.classList.add("day");
 
       const isSelected = day.id === this.#dayId;
@@ -500,7 +499,6 @@ class App {
 
     for (const stage of this.#schedule.getStages(this.#dayId)) {
       const stageElement = document.createElement("div");
-      stageElement.setAttribute("id", `stage-${stage.id}`);
       stageElement.classList.add("stage");
 
       const isSelected = this.#enabledStageIds.includes(stage.id);
