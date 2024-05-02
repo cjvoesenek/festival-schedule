@@ -11,7 +11,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
       - name: Upload files to DeDS
-        uses: .github/actions/upload-to-deds-action
+        uses: ./.github/actions/upload-to-deds-action
         with:
           username: ${{ secrets.DEDS_USERNAME }}
           password: ${{ secrets.DEDS_PASSWORD }}
