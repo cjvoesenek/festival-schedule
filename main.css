@@ -25,17 +25,18 @@ nav {
   overflow-x: scroll;
 }
 
-#days > div {
-  background-color: #eee;
+#days > div,
+#stages > div {
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   cursor: pointer;
 }
 
+#days > div {
+  background-color: #eee;
+}
+
 #stages > div {
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
