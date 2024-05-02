@@ -59,6 +59,10 @@ nav {
   opacity: 0.5;
 }
 
+.stage.unavailable {
+  display: none !important;
+}
+
 .day.inactive {
   opacity: 0.2;
 }

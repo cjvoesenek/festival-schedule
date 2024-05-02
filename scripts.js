@@ -71,6 +71,10 @@ class Schedule {
     }
   }
 
+  hasStage(dayId, stageId) {
+    return this.getStageIds(dayId).includes(stageId);
+  }
+
   getDays() {
     return this.#schedule;
   }
@@ -445,6 +449,9 @@ class App {
       this.#enabledStageIds,
     );
 
+    // Call the setDayId method to update the entire UI to the set day.
+    this.#setDayId(this.#dayId);
+
     // Add a timer to update the current time lines every 30 seconds.
     window.setInterval(() => this.#updateCurrentTimeLines(), 30 * 1000);
     // Since timers do not continue to run when the window is out of focus, also
@@ -492,17 +499,12 @@ class App {
 
   // Populates the stages container with stages.
   //
-  // The available stages may change for each selected day, so this needs to be
-  // called whenever the day changes. Hence, we clear the container first.
+  // We add all stages to the DOM, and show or hide them depending on the
+  // enabled stages.
   #populateStages() {
-    clearContainer(this.#stagesContainer);
-
-    for (const stage of this.#schedule.getStages(this.#dayId)) {
+    for (const stage of this.#schedule.getStages()) {
       const stageElement = document.createElement("div");
       stageElement.classList.add("stage");
-
-      const isSelected = this.#enabledStageIds.includes(stage.id);
-      stageElement.classList.add(isSelected ? "active" : "inactive");
 
       stageElement.style.backgroundColor = stage.colour;
 
@@ -517,6 +519,24 @@ class App {
 
       this.#stageElements.set(stage.id, stageElement);
       this.#stagesContainer.appendChild(stageElement);
+    }
+  }
+
+  #updateStages() {
+    for (const stage of this.#schedule.getStages()) {
+      const stageElement = this.#stageElements.get(stage.id);
+
+      // Check whether the stage is available for this day and add the
+      // appropriate class if it is not.
+      if (!this.#schedule.hasStage(this.#dayId, stage.id)) {
+        stageElement.classList.add("unavailable");
+        continue;
+      } else {
+        stageElement.classList.remove("unavailable");
+      }
+      // Check whether the stage is enabled and add the appropriate class.
+      const isSelected = this.#enabledStageIds.includes(stage.id);
+      stageElement.classList.add(isSelected ? "active" : "inactive");
     }
   }
 
@@ -537,7 +557,7 @@ class App {
     }
 
     // Update the stages and the block schedule.
-    this.#populateStages();
+    this.#updateStages();
     this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
     this.#updateCurrentTimeLines();
 
@@ -545,17 +565,23 @@ class App {
   }
 
   #toggleStageId(stageId) {
-    if (this.#enabledStageIds.includes(stageId)) {
+    const stageElement = this.#stageElements.get(stageId);
+
+    const willBeEnabled = !this.#enabledStageIds.includes(stageId);
+    if (willBeEnabled) {
+      this.#enabledStageIds.push(stageId);
+      stageElement.classList.remove("inactive");
+      stageElement.classList.add("active");
+    } else {
       this.#enabledStageIds = this.#enabledStageIds.filter(
         (id) => id !== stageId,
       );
-    } else {
-      this.#enabledStageIds.push(stageId);
+      stageElement.classList.remove("active");
+      stageElement.classList.add("inactive");
     }
-    // Repopulate the stages control and update the block schedule.
-    this.#populateStages();
+
+    // Update the block schedule.
     this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
-    this.#updateCurrentTimeLines();
 
     this.#saveState();
   }
