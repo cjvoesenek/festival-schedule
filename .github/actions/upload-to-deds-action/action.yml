@@ -6,7 +6,7 @@ inputs:
   password:
     description: Password for DeDS
     required: true
-  file:
+  files:
     description: File to upload
     required: true
 runs:
