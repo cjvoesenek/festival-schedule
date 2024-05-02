@@ -1,0 +1,18 @@
+name: deploy-to-deds
+run-name: Deploy to DeDS
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy-to-deds:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Upload files to DeDS
+        uses: .github/actions/upload-to-deds-action
+        with:
+          username: ${{ secrets.DEDS_USERNAME }}
+          password: ${{ secrets.DEDS_PASSWORD }}
+          files: index.html main.css scripts.js schedule.json

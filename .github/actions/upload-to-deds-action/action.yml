@@ -1,0 +1,14 @@
+name: "upload-to-deds-action"
+inputs:
+  username:
+    description: Username for DeDS
+    required: true
+  password:
+    description: Password for DeDS
+    required: true
+  file:
+    description: File to upload
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
