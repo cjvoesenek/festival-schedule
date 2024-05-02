@@ -421,6 +421,7 @@ class App {
 
   #dayId;
   #enabledStageIds;
+  #scrollPosition;
 
   constructor(daysContainer, stagesContainer, eventsContainer, schedule) {
     this.#daysContainer = daysContainer;
@@ -432,6 +433,7 @@ class App {
     // Start with the first day and all stages enabled.
     this.#dayId = schedule.getDayIds()[0];
     this.#enabledStageIds = schedule.getStageIds();
+    this.#scrollPosition = null;
 
     // If present, load the state from local storage.
     this.#loadState();
@@ -441,13 +443,14 @@ class App {
 
     this.#populateDays();
     this.#populateStages();
-
     this.#blockSchedule = new BlockSchedule(
       this.#eventsContainer,
       schedule,
       this.#dayId,
       this.#enabledStageIds,
     );
+    // Restore the scroll position if it was set in the saved state.
+    this.#restoreScrollPosition();
 
     // Call the setDayId method to update the entire UI to the set day.
     this.#setDayId(this.#dayId);
@@ -459,6 +462,11 @@ class App {
     window.addEventListener("focus", () => {
       this.#updateCurrentTimeLines();
     });
+    // Save the scroll position when the user finishes scrolling, so it can be
+    // restored the next time the page is opened.
+    eventsContainer.addEventListener("scrollend", () => {
+      this.#saveScrollPosition();
+    });
   }
 
   // Saves the day and enabled stages to local storage.
@@ -468,6 +476,7 @@ class App {
       "enabledStageIds",
       JSON.stringify(this.#enabledStageIds),
     );
+    localStorage.setItem("scrollPosition", this.#scrollPosition);
   }
 
   // If present, loads the day and enabled stages from local storage.
@@ -476,6 +485,8 @@ class App {
     if (dayId) this.#dayId = dayId;
     const enabledStageIds = localStorage.getItem("enabledStageIds");
     if (enabledStageIds) this.#enabledStageIds = JSON.parse(enabledStageIds);
+    const scrollPosition = localStorage.getItem("scrollPosition");
+    if (scrollPosition) this.#scrollPosition = scrollPosition;
   }
 
   // Populates the days container with days.
@@ -519,6 +530,12 @@ class App {
 
       this.#stageElements.set(stage.id, stageElement);
       this.#stagesContainer.appendChild(stageElement);
+    }
+  }
+
+  #restoreScrollPosition() {
+    if (this.#scrollPosition !== null) {
+      this.#eventsContainer.scrollLeft = this.#scrollPosition;
     }
   }
 
@@ -583,6 +600,11 @@ class App {
     // Update the block schedule.
     this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
 
+    this.#saveState();
+  }
+
+  #saveScrollPosition() {
+    this.#scrollPosition = this.#eventsContainer.scrollLeft;
     this.#saveState();
   }
 }
