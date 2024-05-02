@@ -31,10 +31,19 @@ function clearContainer(container) {
 // Parses a time string in the format "HH:MM" and returns the number of minutes.
 function computeNumMinutes(time) {
   let [hours, minutes] = time.split(":").map((x) => parseInt(x));
-  if (hours < 12) {
+  if (hours < 6) {
     hours += 24;
   }
   return hours * 60 + minutes;
+}
+
+// Parses a date string in the format "YYYY-MM-DD" and returns a Date object.
+function parseDate(date) {
+  // This assumes that the date is in the current time zone, which should be OK.
+  const parsed = new Date(date);
+  // Set the time to 00:00:00.000.
+  parsed.setHours(0, 0, 0, 0);
+  return parsed;
 }
 
 // Festival schedule class.
@@ -75,6 +84,10 @@ class Schedule {
     }
   }
 
+  getDay(dayId) {
+    return this.#schedule.find((day) => day.id === dayId);
+  }
+
   getStage(stageId) {
     return this.#stages.find((stage) => stage.id === stageId);
   }
@@ -83,6 +96,10 @@ class Schedule {
     return this.#schedule.find((day) => day.id === dayId).events[stageId];
   }
 
+  // Gets the start and end of the schedule at the specified day and stage.
+  //
+  // The range is returned as the start and end in minutes from 00:00 of the
+  // start of the specified day.
   getRangeInMinutes(dayId, stageId) {
     const events = this.getEvents(dayId, stageId);
     const startMinutes = Math.min(
@@ -92,6 +109,16 @@ class Schedule {
       ...events.map((event) => computeNumMinutes(event.end)),
     );
     return [startMinutes, endMinutes];
+  }
+
+  // Gets the reference time for the schedule.
+  //
+  // This is the time relative to which other times to display the schedule are
+  // computed. It is defined as midnight at the start of the specified day.
+  //
+  // It is returned as a Date object.
+  getReferenceTime(dayId) {
+    return parseDate(this.getDay(dayId).date);
   }
 
   static async fetch(url) {
@@ -118,17 +145,26 @@ class StageSchedule {
   static #BLOCK_STROKE_COLOUR = "white";
   // The stroke with for the blocks.
   static #BLOCK_STROKE_WIDTH = 0.5;
+  // The stroke colour for the current time line.
+  static #CURRENT_TIME_LINE_STROKE_COLOUR = "#000";
+  // The stroke width for the current time line.
+  static #CURRENT_TIME_LINE_STROKE_WIDTH = 1;
   // The stroke colour for the hour lines.
   static #HOUR_LINE_STROKE_COLOUR = "#eee";
   // The stroke width for the hour lines.
   static #HOUR_LINE_STROKE_WIDTH = 0.5;
 
   #svg;
+  #currentTimeLine;
   #rangeInMinutes;
 
-  constructor(svg, rangeInMinutes) {
+  constructor(svg, currentTimeLine, rangeInMinutes) {
     this.#svg = svg;
+    this.#currentTimeLine = currentTimeLine;
     this.#rangeInMinutes = rangeInMinutes;
+
+    // Set the current time line to the current time.
+    this.updateCurrentTimeLine();
   }
 
   get svg() {
@@ -156,6 +192,19 @@ class StageSchedule {
     );
   }
 
+  // Updates the current time line to the current time.
+  updateCurrentTimeLine() {
+    const now = new Date();
+    const relativeTimeMinutes =
+      (now - this.#currentTimeLine.referenceTime) / (1000 * 60);
+
+    // If the current time is before the start of this day's schedule or after
+    // its end, the line will be out of bounds, and therefore clipped off.
+    const element = this.#currentTimeLine.element;
+    element.setAttribute("x1", relativeTimeMinutes);
+    element.setAttribute("x2", relativeTimeMinutes);
+  }
+
   // Creates a block schedule from a schedule object for a specific day and
   // stage.
   static fromSchedule(schedule, dayId, stageId) {
@@ -168,12 +217,15 @@ class StageSchedule {
     // Create a root SVG element for each block schedule.
     const svg = createSvgElement("svg");
 
-    // Create groups for blocks, hour lines and text.
-    const gHourLines = createSvgElement("g", {});
-    const gBlocks = createSvgElement("g", {});
-    const gText = createSvgElement("g", {});
+    // Create groups for hour lines, blocks, the current time line and text.
+    // They are created in that order to ensure the correct layering.
+    const gHourLines = createSvgElement("g");
+    const gBlocks = createSvgElement("g");
+    const gCurrentTime = createSvgElement("g");
+    const gText = createSvgElement("g");
     svg.appendChild(gHourLines);
     svg.appendChild(gBlocks);
+    svg.appendChild(gCurrentTime);
     svg.appendChild(gText);
 
     // Create a vertical line for each hour, just create all the lines we may
@@ -189,6 +241,25 @@ class StageSchedule {
       });
       gHourLines.appendChild(line);
     }
+
+    // Create a vertical line for the current time, initialise it at 00:00, it
+    // will be updated in the constructor of the StageSchedule.
+    const currentTimeLineElement = createSvgElement("line", {
+      x1: 0,
+      y1: 0,
+      x2: 0,
+      y2: StageSchedule.#BLOCK_HEIGHT_MINUTES,
+      stroke: StageSchedule.#CURRENT_TIME_LINE_STROKE_COLOUR,
+      "stroke-width": StageSchedule.#CURRENT_TIME_LINE_STROKE_WIDTH,
+    });
+    gCurrentTime.appendChild(currentTimeLineElement);
+
+    // Store the line element in an object, along with the reference time of
+    // this day.
+    const currentTimeLine = {
+      referenceTime: schedule.getReferenceTime(dayId),
+      element: currentTimeLineElement,
+    };
 
     // Create blocks for each event, coordinates are in minutes from 00:00
     // today. Note: any events after midnight (i.e. 00:00 the next day), are
@@ -248,7 +319,7 @@ class StageSchedule {
     // combination.
     const rangeInMinutes = schedule.getRangeInMinutes(dayId, stageId);
 
-    return new StageSchedule(svg, rangeInMinutes);
+    return new StageSchedule(svg, currentTimeLine, rangeInMinutes);
   }
 }
 
@@ -282,6 +353,18 @@ class BlockSchedule {
 
       stageSchedule.clip(startMinutes, endMinutes);
       this.#container.appendChild(stageSchedule.svg);
+    }
+  }
+
+  updateCurrentTimeLines(dayId, enabledStageIds) {
+    // Only update the current time line for the stages that are currently
+    // being displayed.
+    const stageSchedules = this.#stageSchedules.get(dayId);
+    for (const [stageId, stageSchedule] of stageSchedules) {
+      const isEnabled = enabledStageIds.includes(stageId);
+      if (!isEnabled) continue;
+
+      stageSchedule.updateCurrentTimeLine();
     }
   }
 
@@ -361,6 +444,14 @@ class App {
       this.#dayId,
       this.#enabledStageIds,
     );
+
+    // Add a timer to update the current time lines every 30 seconds.
+    window.setInterval(() => this.#updateCurrentTimeLines(), 30 * 1000);
+    // Since timers do not continue to run when the window is out of focus, also
+    // update the current time lines when the window is focused.
+    window.addEventListener("focus", () => {
+      this.#updateCurrentTimeLines();
+    });
   }
 
   // Saves the day and enabled stages to local storage.
@@ -431,6 +522,13 @@ class App {
     }
   }
 
+  #updateCurrentTimeLines() {
+    this.#blockSchedule.updateCurrentTimeLines(
+      this.#dayId,
+      this.#enabledStageIds,
+    );
+  }
+
   #setDayId(dayId) {
     this.#dayId = dayId;
 
@@ -443,6 +541,7 @@ class App {
     // Update the stages and the block schedule.
     this.#populateStages();
     this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
+    this.#updateCurrentTimeLines();
 
     this.#saveState();
   }
@@ -458,6 +557,7 @@ class App {
     // Repopulate the stages control and update the block schedule.
     this.#populateStages();
     this.#blockSchedule.updateBlockSchedule(this.#dayId, this.#enabledStageIds);
+    this.#updateCurrentTimeLines();
 
     this.#saveState();
   }
