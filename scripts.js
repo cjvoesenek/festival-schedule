@@ -243,18 +243,30 @@ class StageScheduleBuilder {
     const svg = createSvgElement("svg");
 
     // Create groups for hour lines, blocks, the current time line and text.
-    // They are created in that order to ensure the correct layering.
-    const gHourLines = createSvgElement("g");
-    const gBlocks = createSvgElement("g");
-    const gCurrentTime = createSvgElement("g");
-    const gText = createSvgElement("g");
+    const gHourLines = this.#createHourLines();
+    const [gCurrentTime, currentTimeLine] = this.#createCurrentTimeLine();
+    const [gBlocks, gText] = this.#createBlocks();
+
+    // Append the groups in a specific order to ensure they are layered
+    // appropriately (from bottom to top).
     svg.appendChild(gHourLines);
     svg.appendChild(gBlocks);
     svg.appendChild(gCurrentTime);
     svg.appendChild(gText);
 
-    // Create a vertical line for each hour, just create all the lines we may
-    // possibly show: from 00:00 until 00:00 the next day.
+    return new StageSchedule(
+      svg,
+      currentTimeLine,
+      { ...this.#config.blockHeight },
+      this.#rangeInMinutes,
+    );
+  }
+
+  // Creates a vertical line for each hour, just create all the lines we may
+  // possibly show: from 00:00 until 00:00 the next day.
+  #createHourLines() {
+    const gHourLines = createSvgElement("g");
+
     for (let minute = 0; minute < 48 * 60; minute += 60) {
       const line = createSvgElement("line", {
         x1: minute,
@@ -266,9 +278,13 @@ class StageScheduleBuilder {
       });
       gHourLines.appendChild(line);
     }
+    return gHourLines;
+  }
 
-    // Create a vertical line for the current time, initialise it at 00:00, it
-    // will be updated in the constructor of the StageSchedule.
+  // Creates a vertical line for the current time, initialise it at 00:00, it
+  // will be updated in the constructor of the StageSchedule.
+  #createCurrentTimeLine() {
+    const gCurrentTime = createSvgElement("g");
     const currentTimeLineElement = createSvgElement("line", {
       x1: 0,
       y1: 0,
@@ -286,68 +302,80 @@ class StageScheduleBuilder {
       element: currentTimeLineElement,
     };
 
-    // Create blocks for each event, coordinates are in minutes from 00:00
-    // today. Note: any events after midnight (i.e. 00:00 the next day), are
-    // considered to be part of this day.
+    return [gCurrentTime, currentTimeLine];
+  }
+
+  // Creates blocks for each event, coordinates are in minutes from 00:00 today.
+  // Note: any events after midnight (i.e. 00:00 the next day), are considered
+  // to be part of this day. Blocks and their associated text are created in
+  // separate groups, since they need to be layered differently with respect to
+  // the hour and current time lines.
+  #createBlocks() {
+    const gBlocks = createSvgElement("g");
+    const gText = createSvgElement("g");
     for (const event of this.#events) {
       const xStart = computeNumMinutes(event.start);
       const xEnd = computeNumMinutes(event.end);
       const width = xEnd - xStart;
 
-      const rect = createSvgElement("rect", {
-        x: xStart,
-        y: 0,
-        width: width,
-        height: this.#config.blockHeight.minutes,
-        fill: this.#stageColour,
-        stroke: this.#config.block.stroke,
-        "stroke-width": this.#config.block.strokeWidth,
-      });
-      rect.classList.add("block");
-      if (event.url) {
-        // If the event has a URL, add a click event to open the URL in a new
-        // tab. The block will also be highlighted on hover.
-        rect.classList.add("clickable");
-        rect.addEventListener("click", () => window.open(event.url, "_blank"));
-      }
-      gBlocks.appendChild(rect);
+      const block = this.#createBlock(xStart, width, event);
+      const blockText = this.#createBlockText(xStart, width, event);
 
-      // Create a foreign object with a div so we can more easily have nicely
-      // wrapping text, and smaller time text under the artist name.
-      const foreignObject = createSvgElement("foreignObject", {
-        x: xStart,
-        y: 0,
-        width: width,
-        height: this.#config.blockHeight.minutes,
-      });
-      foreignObject.classList.add("block-text");
-      // Create wrapping flexbox div to layout the artist name and time.
-      const textContainerDiv = createXhtmlElement("div");
-      textContainerDiv.classList.add("text-container");
-
-      // Add the artist name and time to this div.
-      const nameDiv = createXhtmlElement("div");
-      nameDiv.classList.add("artist-name");
-      nameDiv.textContent = event.name;
-      const timeDiv = createXhtmlElement("div");
-      timeDiv.classList.add("time");
-      timeDiv.textContent = `${event.start} – ${event.end}`;
-
-      textContainerDiv.appendChild(nameDiv);
-      textContainerDiv.appendChild(timeDiv);
-      foreignObject.appendChild(textContainerDiv);
-
-      gText.appendChild(foreignObject);
+      gBlocks.appendChild(block);
+      gText.appendChild(blockText);
     }
+    return [gBlocks, gText];
+  }
 
-    // Finally, compute the start end end time in minutes for this day/stage
-    // combination.
-    return new StageSchedule(
-      svg,
-      currentTimeLine,
-      { ...this.#config.blockHeight },
-      this.#rangeInMinutes,
-    );
+  // Creates a single block for an event.
+  #createBlock(xStart, width, event) {
+    const rect = createSvgElement("rect", {
+      x: xStart,
+      y: 0,
+      width: width,
+      height: this.#config.blockHeight.minutes,
+      fill: this.#stageColour,
+      stroke: this.#config.block.stroke,
+      "stroke-width": this.#config.block.strokeWidth,
+    });
+    rect.classList.add("block");
+    if (event.url) {
+      // If the event has a URL, add a click event to open the URL in a new
+      // tab. The block will also be highlighted on hover.
+      rect.classList.add("clickable");
+      rect.addEventListener("click", () => window.open(event.url, "_blank"));
+    }
+    return rect;
+  }
+
+  // Creates a foreign object with a div to contain the artist name and stage
+  // times. This ensure that we can more easily have nicely wrapping text, and
+  // smaller time text under the artist name.
+  #createBlockText(xStart, width, event) {
+    const foreignObject = createSvgElement("foreignObject", {
+      x: xStart,
+      y: 0,
+      width: width,
+      height: this.#config.blockHeight.minutes,
+    });
+    foreignObject.classList.add("block-text");
+    // Create wrapping flexbox div to layout the artist name and time.
+    const textContainerDiv = createXhtmlElement("div");
+    textContainerDiv.classList.add("text-container");
+
+    // Add the artist name and time to this div.
+    const nameDiv = createXhtmlElement("div");
+    nameDiv.classList.add("artist-name");
+    nameDiv.textContent = event.name;
+    const timeDiv = createXhtmlElement("div");
+    timeDiv.classList.add("time");
+    timeDiv.textContent = `${event.start} – ${event.end}`;
+
+    textContainerDiv.appendChild(nameDiv);
+    textContainerDiv.appendChild(timeDiv);
+    foreignObject.appendChild(textContainerDiv);
+
+    return foreignObject;
   }
 }
 
