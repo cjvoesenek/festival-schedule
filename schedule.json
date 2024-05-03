@@ -1,4 +1,22 @@
 {
+  "config": {
+    "blockHeight": {
+      "minutes": 30,
+      "pixels": 100
+    },
+    "block": {
+      "stroke": "#fff",
+      "strokeWidth": 0.5
+    },
+    "currentTimeLine": {
+      "stroke": "#000",
+      "strokeWidth": 1
+    },
+    "hourLine": {
+      "stroke": "#eee",
+      "strokeWidth": 0.5
+    }
+  },
   "stages": [
     {
       "id": "one",

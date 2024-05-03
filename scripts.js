@@ -51,12 +51,18 @@ function parseDate(date) {
 // This contains a list of stages and a schedule, where the schedule is a list
 // of days, each with a list of events for each stage.
 class Schedule {
+  #config;
   #stages;
   #schedule;
 
-  constructor(stages, schedule) {
+  constructor(config, stages, schedule) {
+    this.#config = config;
     this.#stages = stages;
     this.#schedule = schedule;
+  }
+
+  getConfig() {
+    return this.#config;
   }
 
   getDayIds() {
@@ -128,9 +134,10 @@ class Schedule {
   static async fetch(url) {
     const response = await fetch(url);
     const data = await response.json();
+    const config = data.config;
     const stages = data.stages;
     const schedule = data.schedule;
-    return new Schedule(stages, schedule);
+    return new Schedule(config, stages, schedule);
   }
 }
 
@@ -193,27 +200,12 @@ class StageSchedule {
   }
 
   static fromSchedule(schedule, dayId, stageId) {
-    const config = {
-      // Height of the blocks in "minutes", to determine their aspect ratio, and
-      // in pixels, for their physical size.
-      blockHeight: {
-        minutes: 30,
-        pixels: 100,
-      },
-      block: {
-        stroke: "white",
-        strokeWidth: 0.5,
-      },
-      currentTimeLine: {
-        stroke: "#000",
-        strokeWidth: 1,
-      },
-      hourLine: {
-        stroke: "#eee",
-        strokeWidth: 0.5,
-      },
-    };
-    const builder = new StageScheduleBuilder(config, schedule, dayId, stageId);
+    const builder = new StageScheduleBuilder(
+      schedule.getConfig(),
+      schedule,
+      dayId,
+      stageId,
+    );
     return builder.buildStageSchedule();
   }
 }
