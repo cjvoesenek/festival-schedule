@@ -511,6 +511,28 @@ class App {
     eventsContainer.addEventListener("scrollend", () => {
       this.#saveScrollPosition();
     });
+
+    // The page may in some (low resolution/small window) situations also be
+    // scrolled vertically. In these situations it is more intuitive that the
+    // mouse wheel scrolls vertically. However, when the page cannot be scrolled
+    // vertically, the mouse wheel should scroll each container horizontally.
+    const wheelCallback = (container, event) => {
+      const root = document.documentElement;
+      const canScrollVertically = root.scrollHeight > root.clientHeight;
+      if (canScrollVertically) return;
+
+      event.preventDefault();
+      container.scrollLeft += event.deltaY;
+    };
+    this.#daysContainer.addEventListener("wheel", (event) =>
+      wheelCallback(this.#daysContainer, event),
+    );
+    this.#stagesContainer.addEventListener("wheel", (event) =>
+      wheelCallback(this.#stagesContainer, event),
+    );
+    this.#eventsContainer.addEventListener("wheel", (event) =>
+      wheelCallback(this.#eventsContainer, event),
+    );
   }
 
   // Saves the day and enabled stages to local storage.
