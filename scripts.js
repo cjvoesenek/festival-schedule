@@ -139,32 +139,15 @@ class Schedule {
 // This class represents a block schedule for a single stage on a single day as
 // an SVG element.
 class StageSchedule {
-  // The height of each block in "minutes", to determine the aspect ratio of the
-  // blocks.
-  static #BLOCK_HEIGHT_MINUTES = 30;
-  // The height of the SVG (i.e. height of the block) in pixels.
-  static #HEIGHT = 100;
-  // The stroke colour for the blocks, mainly useful when events are directly
-  // adjacent to each other.
-  static #BLOCK_STROKE_COLOUR = "white";
-  // The stroke with for the blocks.
-  static #BLOCK_STROKE_WIDTH = 0.5;
-  // The stroke colour for the current time line.
-  static #CURRENT_TIME_LINE_STROKE_COLOUR = "#000";
-  // The stroke width for the current time line.
-  static #CURRENT_TIME_LINE_STROKE_WIDTH = 1;
-  // The stroke colour for the hour lines.
-  static #HOUR_LINE_STROKE_COLOUR = "#eee";
-  // The stroke width for the hour lines.
-  static #HOUR_LINE_STROKE_WIDTH = 0.5;
-
   #svg;
   #currentTimeLine;
+  #blockHeight;
   #rangeInMinutes;
 
-  constructor(svg, currentTimeLine, rangeInMinutes) {
+  constructor(svg, currentTimeLine, blockHeight, rangeInMinutes) {
     this.#svg = svg;
     this.#currentTimeLine = currentTimeLine;
+    this.#blockHeight = blockHeight;
     this.#rangeInMinutes = rangeInMinutes;
 
     // Set the current time line to the current time.
@@ -187,12 +170,12 @@ class StageSchedule {
 
     this.#svg.setAttribute(
       "viewBox",
-      `${startMinutes} 0 ${width} ${StageSchedule.#BLOCK_HEIGHT_MINUTES}`,
+      `${startMinutes} 0 ${width} ${this.#blockHeight.minutes}`,
     );
-    this.#svg.setAttribute("height", StageSchedule.#HEIGHT);
+    this.#svg.setAttribute("height", this.#blockHeight.pixels);
     this.#svg.setAttribute(
       "width",
-      (width / StageSchedule.#BLOCK_HEIGHT_MINUTES) * StageSchedule.#HEIGHT,
+      (width / this.#blockHeight.minutes) * this.#blockHeight.pixels,
     );
   }
 
@@ -209,16 +192,54 @@ class StageSchedule {
     element.setAttribute("x2", relativeTimeMinutes);
   }
 
+  static fromSchedule(schedule, dayId, stageId) {
+    const config = {
+      // Height of the blocks in "minutes", to determine their aspect ratio, and
+      // in pixels, for their physical size.
+      blockHeight: {
+        minutes: 30,
+        pixels: 100,
+      },
+      block: {
+        stroke: "white",
+        strokeWidth: 0.5,
+      },
+      currentTimeLine: {
+        stroke: "#000",
+        strokeWidth: 1,
+      },
+      hourLine: {
+        stroke: "#eee",
+        strokeWidth: 0.5,
+      },
+    };
+    const builder = new StageScheduleBuilder(config, schedule, dayId, stageId);
+    return builder.buildStageSchedule();
+  }
+}
+
+// Stage schedule builder.
+//
+// This class is used to build a stage schedule from a schedule object.
+class StageScheduleBuilder {
+  #config;
+  #events;
+  #stageColour;
+  #referenceTime;
+  #rangeInMinutes;
+
+  constructor(config, schedule, dayId, stageId) {
+    this.#config = config;
+    this.#events = schedule.getEvents(dayId, stageId);
+    this.#stageColour = schedule.getStage(stageId).colour;
+    this.#referenceTime = schedule.getReferenceTime(dayId);
+    this.#rangeInMinutes = schedule.getRangeInMinutes(dayId, stageId);
+  }
+
   // Creates a block schedule from a schedule object for a specific day and
   // stage.
-  static fromSchedule(schedule, dayId, stageId) {
-    const events = schedule.getEvents(dayId, stageId);
-
-    // Colour for this block schedule (i.e. the colour for the current stage).
-    const stage = schedule.getStage(stageId);
-    const stageColour = stage.colour;
-
-    // Create a root SVG element for each block schedule.
+  buildStageSchedule() {
+    // Create a root SVG element for this stage's block schedule.
     const svg = createSvgElement("svg");
 
     // Create groups for hour lines, blocks, the current time line and text.
@@ -239,9 +260,9 @@ class StageSchedule {
         x1: minute,
         y1: 0,
         x2: minute,
-        y2: StageSchedule.#BLOCK_HEIGHT_MINUTES,
-        stroke: StageSchedule.#HOUR_LINE_STROKE_COLOUR,
-        "stroke-width": StageSchedule.#HOUR_LINE_STROKE_WIDTH,
+        y2: this.#config.blockHeight.minutes,
+        stroke: this.#config.hourLine.stroke,
+        "stroke-width": this.#config.hourLine.strokeWidth,
       });
       gHourLines.appendChild(line);
     }
@@ -252,23 +273,23 @@ class StageSchedule {
       x1: 0,
       y1: 0,
       x2: 0,
-      y2: StageSchedule.#BLOCK_HEIGHT_MINUTES,
-      stroke: StageSchedule.#CURRENT_TIME_LINE_STROKE_COLOUR,
-      "stroke-width": StageSchedule.#CURRENT_TIME_LINE_STROKE_WIDTH,
+      y2: this.#config.blockHeight.minutes,
+      stroke: this.#config.currentTimeLine.stroke,
+      "stroke-width": this.#config.currentTimeLine.strokeWidth,
     });
     gCurrentTime.appendChild(currentTimeLineElement);
 
     // Store the line element in an object, along with the reference time of
     // this day.
     const currentTimeLine = {
-      referenceTime: schedule.getReferenceTime(dayId),
+      referenceTime: this.#referenceTime,
       element: currentTimeLineElement,
     };
 
     // Create blocks for each event, coordinates are in minutes from 00:00
     // today. Note: any events after midnight (i.e. 00:00 the next day), are
     // considered to be part of this day.
-    for (const event of events) {
+    for (const event of this.#events) {
       const xStart = computeNumMinutes(event.start);
       const xEnd = computeNumMinutes(event.end);
       const width = xEnd - xStart;
@@ -277,10 +298,10 @@ class StageSchedule {
         x: xStart,
         y: 0,
         width: width,
-        height: StageSchedule.#BLOCK_HEIGHT_MINUTES,
-        fill: stageColour,
-        stroke: StageSchedule.#BLOCK_STROKE_COLOUR,
-        "stroke-width": StageSchedule.#BLOCK_STROKE_WIDTH,
+        height: this.#config.blockHeight.minutes,
+        fill: this.#stageColour,
+        stroke: this.#config.block.stroke,
+        "stroke-width": this.#config.block.strokeWidth,
       });
       rect.classList.add("block");
       if (event.url) {
@@ -297,7 +318,7 @@ class StageSchedule {
         x: xStart,
         y: 0,
         width: width,
-        height: StageSchedule.#BLOCK_HEIGHT_MINUTES,
+        height: this.#config.blockHeight.minutes,
       });
       foreignObject.classList.add("block-text");
       // Create wrapping flexbox div to layout the artist name and time.
@@ -321,9 +342,12 @@ class StageSchedule {
 
     // Finally, compute the start end end time in minutes for this day/stage
     // combination.
-    const rangeInMinutes = schedule.getRangeInMinutes(dayId, stageId);
-
-    return new StageSchedule(svg, currentTimeLine, rangeInMinutes);
+    return new StageSchedule(
+      svg,
+      currentTimeLine,
+      { ...this.#config.blockHeight },
+      this.#rangeInMinutes,
+    );
   }
 }
 
