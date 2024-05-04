@@ -314,9 +314,8 @@ class StageScheduleBuilder {
         y1: 0,
         x2: x,
         y2: config.blockHeight.coords,
-        stroke: config.hourLine.stroke,
-        "stroke-width": config.hourLine.strokeWidth,
       });
+      line.classList.add("hour");
       gHourLines.appendChild(line);
     }
     return gHourLines;
@@ -335,10 +334,9 @@ class StageScheduleBuilder {
         y1: 0,
         x2: 0,
         y2: config.blockHeight.coords,
-        stroke: config.currentTimeLine.stroke,
-        "stroke-width": config.currentTimeLine.strokeWidth,
       },
     );
+    currentTimeLineElement.classList.add("current-time");
     gCurrentTime.appendChild(currentTimeLineElement);
 
     // Store the line element in an object, along with the reference time of
@@ -386,8 +384,6 @@ class StageScheduleBuilder {
       width: width,
       height: config.blockHeight.coords,
       fill: this.#stageColour,
-      stroke: config.block.stroke,
-      "stroke-width": config.block.strokeWidth,
     });
     rect.classList.add("block");
     if (event.url) {

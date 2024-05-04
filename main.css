@@ -107,6 +107,11 @@ nav {
 }
 
 /* Block schedule SVG styles. */
+rect.block {
+  stroke: #fff;
+  stroke-width: 0.5;
+}
+
 rect.block.clickable {
   cursor: pointer;
 }
@@ -135,4 +140,14 @@ div.text-container > div.artist-name {
 
 div.text-container > div.time {
   font-size: 0.75em;
+}
+
+line.current-time {
+  stroke: #888;
+  stroke-width: 1;
+}
+
+line.hour {
+  stroke: #eee;
+  stroke-width: 0.5;
 }
