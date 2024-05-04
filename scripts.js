@@ -486,39 +486,28 @@ class BlockSchedule {
     );
 
     this.#clearContainer();
-    const stageSchedules = this.#stageSchedules.get(dayId);
-    for (const [stageId, stageSchedule] of stageSchedules) {
-      const isEnabled = enabledStageIds.includes(stageId);
-      if (!isEnabled) continue;
-
+    this.#mapCurrentStages(dayId, enabledStageIds, (stageSchedule) => {
       stageSchedule.clip(startCoord, endCoord);
       this.#container.appendChild(stageSchedule.svg);
-    }
+    });
   }
 
   updateCurrentTimeLines(dayId, enabledStageIds) {
-    // Only update the current time line for the stages that are currently
-    // being displayed.
-    const stageSchedules = this.#stageSchedules.get(dayId);
-    for (const [stageId, stageSchedule] of stageSchedules) {
-      const isEnabled = enabledStageIds.includes(stageId);
-      if (!isEnabled) continue;
-
-      stageSchedule.updateCurrentTimeLine();
-    }
+    this.#mapCurrentStages(dayId, enabledStageIds, (stageSchedule) =>
+      stageSchedule.updateCurrentTimeLine(),
+    );
   }
 
   // Returns the topmost current time line element for this schedule.
   //
   // This can be used to scroll to the current time.
   getCurrentTimeLineElement(dayId, enabledStageIds) {
-    const stageSchedules = this.#stageSchedules.get(dayId);
-    for (const [stageId, stageSchedule] of stageSchedules) {
-      const isEnabled = enabledStageIds.includes(stageId);
-      if (!isEnabled) continue;
-
-      return stageSchedule.getCurrentTimeLineElement();
-    }
+    const elements = this.#mapCurrentStages(
+      dayId,
+      enabledStageIds,
+      (stageSchedule) => stageSchedule.getCurrentTimeLineElement(),
+    );
+    return elements[0];
   }
 
   #generateStageSchedules(schedule) {
@@ -535,21 +524,24 @@ class BlockSchedule {
   }
 
   #computeCurrentRangeInCoords(dayId, enabledStageIds) {
-    const stageSchedules = this.#stageSchedules.get(dayId);
-
-    let start = Number.MAX_VALUE;
-    let end = Number.MIN_VALUE;
-    for (const stageId of enabledStageIds) {
-      const hasStageSchedule = stageSchedules.has(stageId);
-      if (!hasStageSchedule) continue;
-
-      const [startCur, endCur] = this.#stageSchedules
-        .get(dayId)
-        .get(stageId).rangeInCoords;
-      if (startCur < start) start = startCur;
-      if (endCur > end) end = endCur;
-    }
+    const ranges = this.#mapCurrentStages(
+      dayId,
+      enabledStageIds,
+      (stageSchedule) => stageSchedule.rangeInCoords,
+    );
+    const start = Math.min(...ranges.map((range) => range[0]));
+    const end = Math.max(...ranges.map((range) => range[1]));
     return [start, end];
+  }
+
+  #mapCurrentStages(dayId, enabledStageIds, func) {
+    const stageSchedules = this.#stageSchedules.get(dayId);
+    const availableStageIds = enabledStageIds.filter((stageId) =>
+      stageSchedules.has(stageId),
+    );
+    return availableStageIds.map((stageId) =>
+      func(stageSchedules.get(stageId)),
+    );
   }
 
   // Clears all children from an element.
