@@ -1,7 +1,7 @@
 {
   "config": {
     "blockHeight": {
-      "minutes": 30,
+      "coords": 30,
       "pixels": 100
     },
     "block": {

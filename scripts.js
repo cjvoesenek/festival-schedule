@@ -1,23 +1,3 @@
-// Helper functions
-
-// Parses a time string in the format "HH:MM" and returns the number of minutes.
-function computeNumMinutes(time) {
-  let [hours, minutes] = time.split(":").map((x) => parseInt(x));
-  if (hours < 6) {
-    hours += 24;
-  }
-  return hours * 60 + minutes;
-}
-
-// Parses a date string in the format "YYYY-MM-DD" and returns a Date object.
-function parseDate(date) {
-  // This assumes that the date is in the current time zone, which should be OK.
-  const parsed = new Date(date);
-  // Set the time to 00:00:00.000.
-  parsed.setHours(0, 0, 0, 0);
-  return parsed;
-}
-
 // Festival schedule class.
 //
 // This contains a list of stages and a schedule, where the schedule is a list
@@ -26,11 +6,14 @@ class Schedule {
   #config;
   #stages;
   #schedule;
+  #scheduleRanges;
 
   constructor(config, stages, schedule) {
     this.#config = config;
     this.#stages = stages;
     this.#schedule = schedule;
+    // Precompute the start and end times for each stage on each day.
+    this.#scheduleRanges = this.#computeScheduleRanges();
   }
 
   getConfig() {
@@ -78,58 +61,37 @@ class Schedule {
     return this.#schedule.find((day) => day.id === dayId).events[stageId];
   }
 
-  // Gets the start and end of the schedule at the specified day and stage.
-  //
-  // The range is returned as the start and end in minutes from 00:00 of the
-  // start of the specified day.
-  getRangeInMinutesForStage(dayId, stageId) {
-    const events = this.getEvents(dayId, stageId);
-    const startMinutes = Math.min(
-      ...events.map((event) => computeNumMinutes(event.start)),
-    );
-    const endMinutes = Math.max(
-      ...events.map((event) => computeNumMinutes(event.end)),
-    );
-    return [startMinutes, endMinutes];
+  getEventRange(dayId, event) {
+    const date = this.getDay(dayId).date;
+    const start = this.#convertToJSDate(date, event.start);
+    const end = this.#convertToJSDate(date, event.end);
+    return [start, end];
   }
 
-  // Gets the range of the schedule for the specified day and stages.
-  //
-  // The range is returned as the start and end in minutes from 00:00 of the
-  // start of the specified day.
-  getRangeInMinutes(dayId, stageIds) {
-    const availableStageIds = stageIds.filter((stageId) =>
-      this.hasStage(dayId, stageId),
-    );
+  getRangeForStage(dayId, stageId) {
+    return this.#scheduleRanges.get(dayId).get(stageId);
+  }
+
+  getRange(dayId, stageIds) {
+    const availableStageIds = stageIds.filter((stageId) => {
+      return this.hasStage(dayId, stageId);
+    });
     const ranges = availableStageIds.map((stageId) =>
-      this.getRangeInMinutesForStage(dayId, stageId),
+      this.getRangeForStage(dayId, stageId),
     );
-    const startMinutes = Math.min(...ranges.map((range) => range[0]));
-    const endMinutes = Math.max(...ranges.map((range) => range[1]));
-    return [startMinutes, endMinutes];
+    const start = new Date(Math.min(...ranges.map((range) => range[0])));
+    const end = new Date(Math.max(...ranges.map((range) => range[1])));
+    return [start, end];
   }
 
   // Gets the day ID for a date/time in the schedule.
   //
   // This only returns the day ID if the date/time is in the schedule for the
-  // specified stages.
+  // specified stages. It returns the first matching dayId if schedules overlap.
   getDayIdForDateTime(dateTime, stageIds) {
     for (const dayId of this.getDayIds()) {
-      const referenceTime = this.getReferenceTime(dayId);
-
-      // Compute the time in minutes relative to the reference time for this
-      // day.
-      const timeMinutes = (dateTime - referenceTime) / (1000 * 60);
-      const [startMinutes, endMinutes] = this.getRangeInMinutes(
-        dayId,
-        stageIds,
-      );
-      // We found our day if the time is in the range of the schedule. This
-      // will return the first day that matches in case there is overlap in the
-      // schedules.
-      if (timeMinutes >= startMinutes && timeMinutes <= endMinutes) {
-        return dayId;
-      }
+      const [start, end] = this.getRange(dayId, stageIds);
+      if (dateTime >= start && dateTime <= end) return dayId;
     }
     // Return undefined if the date/time is not in any of the schedules.
   }
@@ -141,7 +103,7 @@ class Schedule {
   //
   // It is returned as a Date object.
   getReferenceTime(dayId) {
-    return parseDate(this.getDay(dayId).date);
+    return Schedule.#parseDate(this.getDay(dayId).date);
   }
 
   // Creates a schedule from a JSON URL.
@@ -153,6 +115,53 @@ class Schedule {
     const schedule = data.schedule;
     return new Schedule(config, stages, schedule);
   }
+
+  // Computes the start and end times for each stage on each day.
+  #computeScheduleRanges() {
+    const ranges = new Map();
+    for (const day of this.getDays()) {
+      ranges.set(day.id, new Map());
+      const stageRanges = ranges.get(day.id);
+      for (const stageId of this.getStageIds(day.id)) {
+        const events = this.getEvents(day.id, stageId);
+        const starts = events.map((event) =>
+          this.#convertToJSDate(day.date, event.start),
+        );
+        const ends = events.map((event) =>
+          this.#convertToJSDate(day.date, event.end),
+        );
+        const start = new Date(Math.min(...starts));
+        const end = new Date(Math.max(...ends));
+        stageRanges.set(stageId, [start, end]);
+      }
+    }
+    return ranges;
+  }
+
+  #convertToJSDate(date, time) {
+    const reference = Schedule.#parseDate(date);
+
+    let [hours, minutes] = time.split(":").map((x) => parseInt(x));
+    // Schedules run into the night, so make sure that the day is increased if
+    // the event is after midnight.
+    if (hours < 6) {
+      hours += 24;
+    }
+    // Compute the number of milliseconds since the reference time.
+    const milliseconds = hours * 60 * 60 * 1000 + minutes * 60 * 1000;
+
+    // Create a new date from the reference time and the offset.
+    return new Date(reference.getTime() + milliseconds);
+  }
+
+  // Parses a date string in the format "YYYY-MM-DD" and returns a Date object.
+  static #parseDate(date) {
+    // This assumes that the date is in the current time zone, which should be OK.
+    const parsed = new Date(date);
+    // Set the time to 00:00:00.000.
+    parsed.setHours(0, 0, 0, 0);
+    return parsed;
+  }
 }
 
 // Stage schedule class.
@@ -163,13 +172,13 @@ class StageSchedule {
   #svg;
   #currentTimeLine;
   #blockHeight;
-  #rangeInMinutes;
+  #rangeInCoords;
 
-  constructor(svg, currentTimeLine, blockHeight, rangeInMinutes) {
+  constructor(svg, currentTimeLine, blockHeight, rangeInCoords) {
     this.#svg = svg;
     this.#currentTimeLine = currentTimeLine;
     this.#blockHeight = blockHeight;
-    this.#rangeInMinutes = rangeInMinutes;
+    this.#rangeInCoords = rangeInCoords;
 
     // Set the current time line to the current time.
     this.updateCurrentTimeLine();
@@ -179,38 +188,40 @@ class StageSchedule {
     return this.#svg;
   }
 
-  get rangeInMinutes() {
-    return this.#rangeInMinutes;
+  get rangeInCoords() {
+    return this.#rangeInCoords;
   }
 
-  // Clips the SVG to a specific range of minutes.
+  // Clips the SVG to a specific range of coordinates.
   //
   // This also sets the width and height of the SVG appropriately.
-  clip(startMinutes, endMinutes) {
-    const width = endMinutes - startMinutes;
+  clip(startCoords, endCoords) {
+    const width = endCoords - startCoords;
 
     this.#svg.setAttribute(
       "viewBox",
-      `${startMinutes} 0 ${width} ${this.#blockHeight.minutes}`,
+      `${startCoords} 0 ${width} ${this.#blockHeight.coords}`,
     );
     this.#svg.setAttribute("height", this.#blockHeight.pixels);
     this.#svg.setAttribute(
       "width",
-      (width / this.#blockHeight.minutes) * this.#blockHeight.pixels,
+      (width / this.#blockHeight.coords) * this.#blockHeight.pixels,
     );
   }
 
   // Updates the current time line to the current time.
   updateCurrentTimeLine() {
     const now = new Date();
-    const relativeTimeMinutes =
-      (now - this.#currentTimeLine.referenceTime) / (1000 * 60);
+    const xNow = StageSchedule.toSvgCoordinates(
+      this.#currentTimeLine.referenceTime,
+      now,
+    );
 
     // If the current time is before the start of this day's schedule or after
     // its end, the line will be out of bounds, and therefore clipped off.
     const element = this.#currentTimeLine.element;
-    element.setAttribute("x1", relativeTimeMinutes);
-    element.setAttribute("x2", relativeTimeMinutes);
+    element.setAttribute("x1", xNow);
+    element.setAttribute("x2", xNow);
   }
 
   getCurrentTimeLineElement() {
@@ -218,13 +229,26 @@ class StageSchedule {
   }
 
   static fromSchedule(schedule, dayId, stageId) {
-    const builder = new StageScheduleBuilder(
-      schedule.getConfig(),
-      schedule,
-      dayId,
-      stageId,
-    );
+    const builder = new StageScheduleBuilder(schedule, dayId, stageId);
     return builder.buildStageSchedule();
+  }
+
+  // Converts a date/time to SVG coordinates.
+  //
+  // The reference time is the start of the day, and the SVG coordinates are in
+  // minutes from that time.
+  static toSvgCoordinates(reference, dateTime) {
+    return (dateTime - reference) / (1000 * 60);
+  }
+
+  // Gets the start coordinate, end coordinate and step size for an hour in a
+  // stage schedule.
+  static getHourCoordinates() {
+    return {
+      start: 0,
+      end: 48 * 60,
+      step: 60,
+    };
   }
 }
 
@@ -232,18 +256,18 @@ class StageSchedule {
 //
 // This class is used to build a stage schedule from a schedule object.
 class StageScheduleBuilder {
-  #config;
-  #events;
+  #dayId;
+  #stageId;
+  #schedule;
   #stageColour;
   #referenceTime;
-  #rangeInMinutes;
 
-  constructor(config, schedule, dayId, stageId) {
-    this.#config = config;
-    this.#events = schedule.getEvents(dayId, stageId);
+  constructor(schedule, dayId, stageId) {
+    this.#dayId = dayId;
+    this.#stageId = stageId;
+    this.#schedule = schedule;
     this.#stageColour = schedule.getStage(stageId).colour;
     this.#referenceTime = schedule.getReferenceTime(dayId);
-    this.#rangeInMinutes = schedule.getRangeInMinutesForStage(dayId, stageId);
   }
 
   // Creates a block schedule from a schedule object for a specific day and
@@ -264,36 +288,45 @@ class StageScheduleBuilder {
     svg.appendChild(gCurrentTime);
     svg.appendChild(gText);
 
+    const range = this.#schedule.getRangeForStage(this.#dayId, this.#stageId);
+    const rangeInCoords = range.map((time) =>
+      StageSchedule.toSvgCoordinates(this.#referenceTime, time),
+    );
+
     return new StageSchedule(
       svg,
       currentTimeLine,
-      { ...this.#config.blockHeight },
-      this.#rangeInMinutes,
+      { ...this.#schedule.getConfig().blockHeight },
+      rangeInCoords,
     );
   }
 
   // Creates a vertical line for each hour, just create all the lines we may
   // possibly show: from 00:00 until 00:00 the next day.
   #createHourLines() {
+    const config = this.#schedule.getConfig();
     const gHourLines = StageScheduleBuilder.#createSvgElement("g");
 
-    for (let minute = 0; minute < 48 * 60; minute += 60) {
+    const hours = StageSchedule.getHourCoordinates();
+    for (let x = hours.start; x < hours.end; x += hours.step) {
       const line = StageScheduleBuilder.#createSvgElement("line", {
-        x1: minute,
+        x1: x,
         y1: 0,
-        x2: minute,
-        y2: this.#config.blockHeight.minutes,
-        stroke: this.#config.hourLine.stroke,
-        "stroke-width": this.#config.hourLine.strokeWidth,
+        x2: x,
+        y2: config.blockHeight.coords,
+        stroke: config.hourLine.stroke,
+        "stroke-width": config.hourLine.strokeWidth,
       });
       gHourLines.appendChild(line);
     }
     return gHourLines;
   }
 
-  // Creates a vertical line for the current time, initialise it at 00:00, it
+  // Creates a vertical line for the current time, initialise it at 0, it
   // will be updated in the constructor of the StageSchedule.
   #createCurrentTimeLine() {
+    const config = this.#schedule.getConfig();
+
     const gCurrentTime = StageScheduleBuilder.#createSvgElement("g");
     const currentTimeLineElement = StageScheduleBuilder.#createSvgElement(
       "line",
@@ -301,9 +334,9 @@ class StageScheduleBuilder {
         x1: 0,
         y1: 0,
         x2: 0,
-        y2: this.#config.blockHeight.minutes,
-        stroke: this.#config.currentTimeLine.stroke,
-        "stroke-width": this.#config.currentTimeLine.strokeWidth,
+        y2: config.blockHeight.coords,
+        stroke: config.currentTimeLine.stroke,
+        "stroke-width": config.currentTimeLine.strokeWidth,
       },
     );
     gCurrentTime.appendChild(currentTimeLineElement);
@@ -318,7 +351,8 @@ class StageScheduleBuilder {
     return [gCurrentTime, currentTimeLine];
   }
 
-  // Creates blocks for each event, coordinates are in minutes from 00:00 today.
+  // Creates blocks for each event.
+  //
   // Note: any events after midnight (i.e. 00:00 the next day), are considered
   // to be part of this day. Blocks and their associated text are created in
   // separate groups, since they need to be layered differently with respect to
@@ -326,9 +360,12 @@ class StageScheduleBuilder {
   #createBlocks() {
     const gBlocks = StageScheduleBuilder.#createSvgElement("g");
     const gText = StageScheduleBuilder.#createSvgElement("g");
-    for (const event of this.#events) {
-      const xStart = computeNumMinutes(event.start);
-      const xEnd = computeNumMinutes(event.end);
+
+    const events = this.#schedule.getEvents(this.#dayId, this.#stageId);
+    for (const event of events) {
+      const [start, end] = this.#schedule.getEventRange(this.#dayId, event);
+      const xStart = StageSchedule.toSvgCoordinates(this.#referenceTime, start);
+      const xEnd = StageSchedule.toSvgCoordinates(this.#referenceTime, end);
       const width = xEnd - xStart;
 
       const block = this.#createBlock(xStart, width, event);
@@ -342,14 +379,15 @@ class StageScheduleBuilder {
 
   // Creates a single block for an event.
   #createBlock(xStart, width, event) {
+    const config = this.#schedule.getConfig();
     const rect = StageScheduleBuilder.#createSvgElement("rect", {
       x: xStart,
       y: 0,
       width: width,
-      height: this.#config.blockHeight.minutes,
+      height: config.blockHeight.coords,
       fill: this.#stageColour,
-      stroke: this.#config.block.stroke,
-      "stroke-width": this.#config.block.strokeWidth,
+      stroke: config.block.stroke,
+      "stroke-width": config.block.strokeWidth,
     });
     rect.classList.add("block");
     if (event.url) {
@@ -365,13 +403,14 @@ class StageScheduleBuilder {
   // times. This ensure that we can more easily have nicely wrapping text, and
   // smaller time text under the artist name.
   #createBlockText(xStart, width, event) {
+    const config = this.#schedule.getConfig();
     const foreignObject = StageScheduleBuilder.#createSvgElement(
       "foreignObject",
       {
         x: xStart,
         y: 0,
         width: width,
-        height: this.#config.blockHeight.minutes,
+        height: config.blockHeight.coords,
       },
     );
     foreignObject.classList.add("block-text");
@@ -441,7 +480,7 @@ class BlockSchedule {
   updateBlockSchedule(dayId, enabledStageIds) {
     // Clip the block schedule to the start and end of the current selection of
     // day and stages.
-    const [startMinutes, endMinutes] = this.#computeCurrentRangeInMinutes(
+    const [startCoord, endCoord] = this.#computeCurrentRangeInCoords(
       dayId,
       enabledStageIds,
     );
@@ -452,7 +491,7 @@ class BlockSchedule {
       const isEnabled = enabledStageIds.includes(stageId);
       if (!isEnabled) continue;
 
-      stageSchedule.clip(startMinutes, endMinutes);
+      stageSchedule.clip(startCoord, endCoord);
       this.#container.appendChild(stageSchedule.svg);
     }
   }
@@ -495,7 +534,7 @@ class BlockSchedule {
     return stageSchedules;
   }
 
-  #computeCurrentRangeInMinutes(dayId, enabledStageIds) {
+  #computeCurrentRangeInCoords(dayId, enabledStageIds) {
     const stageSchedules = this.#stageSchedules.get(dayId);
 
     let start = Number.MAX_VALUE;
@@ -506,7 +545,7 @@ class BlockSchedule {
 
       const [startCur, endCur] = this.#stageSchedules
         .get(dayId)
-        .get(stageId).rangeInMinutes;
+        .get(stageId).rangeInCoords;
       if (startCur < start) start = startCur;
       if (endCur > end) end = endCur;
     }
