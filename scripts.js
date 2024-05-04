@@ -113,13 +113,13 @@ class Schedule {
   //
   // This only returns the day ID if the date/time is in the schedule for the
   // specified stages.
-  getDayIdForDateTime(datetime, stageIds) {
+  getDayIdForDateTime(dateTime, stageIds) {
     for (const dayId of this.getDayIds()) {
       const referenceTime = this.getReferenceTime(dayId);
 
       // Compute the time in minutes relative to the reference time for this
       // day.
-      const timeMinutes = (datetime - referenceTime) / (1000 * 60);
+      const timeMinutes = (dateTime - referenceTime) / (1000 * 60);
       const [startMinutes, endMinutes] = this.getRangeInMinutes(
         dayId,
         stageIds,
