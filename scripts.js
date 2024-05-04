@@ -144,6 +144,7 @@ class Schedule {
     return parseDate(this.getDay(dayId).date);
   }
 
+  // Creates a schedule from a JSON URL.
   static async fetch(url) {
     const response = await fetch(url);
     const data = await response.json();
