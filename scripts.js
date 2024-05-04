@@ -21,13 +21,6 @@ function createXhtmlElement(tag, attributes) {
   return createElement(tag, "http://www.w3.org/1999/xhtml", attributes);
 }
 
-// Clears all children from an element.
-function clearContainer(container) {
-  while (container.children.length > 0) {
-    container.removeChild(container.lastChild);
-  }
-}
-
 // Parses a time string in the format "HH:MM" and returns the number of minutes.
 function computeNumMinutes(time) {
   let [hours, minutes] = time.split(":").map((x) => parseInt(x));
@@ -438,7 +431,7 @@ class BlockSchedule {
       enabledStageIds,
     );
 
-    clearContainer(this.#container);
+    this.#clearContainer();
     const stageSchedules = this.#stageSchedules.get(dayId);
     for (const [stageId, stageSchedule] of stageSchedules) {
       const isEnabled = enabledStageIds.includes(stageId);
@@ -503,6 +496,14 @@ class BlockSchedule {
       if (endCur > end) end = endCur;
     }
     return [start, end];
+  }
+
+  // Clears all children from an element.
+  #clearContainer() {
+    const container = this.#container;
+    while (container.children.length > 0) {
+      container.removeChild(container.lastChild);
+    }
   }
 }
 
