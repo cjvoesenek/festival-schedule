@@ -110,7 +110,7 @@ class Schedule {
   //
   // The range is returned as the start and end in minutes from 00:00 of the
   // start of the specified day.
-  getRangeInMinutes(dayId, stageId) {
+  getRangeInMinutesForStage(dayId, stageId) {
     const events = this.getEvents(dayId, stageId);
     const startMinutes = Math.min(
       ...events.map((event) => computeNumMinutes(event.start)),
@@ -119,6 +119,47 @@ class Schedule {
       ...events.map((event) => computeNumMinutes(event.end)),
     );
     return [startMinutes, endMinutes];
+  }
+
+  // Gets the range of the schedule for the specified day and stages.
+  //
+  // The range is returned as the start and end in minutes from 00:00 of the
+  // start of the specified day.
+  getRangeInMinutes(dayId, stageIds) {
+    const availableStageIds = stageIds.filter((stageId) =>
+      this.hasStage(dayId, stageId),
+    );
+    const ranges = availableStageIds.map((stageId) =>
+      this.getRangeInMinutesForStage(dayId, stageId),
+    );
+    const startMinutes = Math.min(...ranges.map((range) => range[0]));
+    const endMinutes = Math.max(...ranges.map((range) => range[1]));
+    return [startMinutes, endMinutes];
+  }
+
+  // Gets the day ID for a date/time in the schedule.
+  //
+  // This only returns the day ID if the date/time is in the schedule for the
+  // specified stages.
+  getDayIdForDateTime(datetime, stageIds) {
+    for (const dayId of this.getDayIds()) {
+      const referenceTime = this.getReferenceTime(dayId);
+
+      // Compute the time in minutes relative to the reference time for this
+      // day.
+      const timeMinutes = (datetime - referenceTime) / (1000 * 60);
+      const [startMinutes, endMinutes] = this.getRangeInMinutes(
+        dayId,
+        stageIds,
+      );
+      // We found our day if the time is in the range of the schedule. This
+      // will return the first day that matches in case there is overlap in the
+      // schedules.
+      if (timeMinutes >= startMinutes && timeMinutes <= endMinutes) {
+        return dayId;
+      }
+    }
+    // Return undefined if the date/time is not in any of the schedules.
   }
 
   // Gets the reference time for the schedule.
@@ -199,6 +240,10 @@ class StageSchedule {
     element.setAttribute("x2", relativeTimeMinutes);
   }
 
+  getCurrentTimeLineElement() {
+    return this.#currentTimeLine.element;
+  }
+
   static fromSchedule(schedule, dayId, stageId) {
     const builder = new StageScheduleBuilder(
       schedule.getConfig(),
@@ -225,7 +270,7 @@ class StageScheduleBuilder {
     this.#events = schedule.getEvents(dayId, stageId);
     this.#stageColour = schedule.getStage(stageId).colour;
     this.#referenceTime = schedule.getReferenceTime(dayId);
-    this.#rangeInMinutes = schedule.getRangeInMinutes(dayId, stageId);
+    this.#rangeInMinutes = schedule.getRangeInMinutesForStage(dayId, stageId);
   }
 
   // Creates a block schedule from a schedule object for a specific day and
@@ -416,6 +461,19 @@ class BlockSchedule {
     }
   }
 
+  // Returns the topmost current time line element for this schedule.
+  //
+  // This can be used to scroll to the current time.
+  getCurrentTimeLineElement(dayId, enabledStageIds) {
+    const stageSchedules = this.#stageSchedules.get(dayId);
+    for (const [stageId, stageSchedule] of stageSchedules) {
+      const isEnabled = enabledStageIds.includes(stageId);
+      if (!isEnabled) continue;
+
+      return stageSchedule.getCurrentTimeLineElement();
+    }
+  }
+
   #generateStageSchedules(schedule) {
     const stageSchedules = new Map();
     for (const dayId of schedule.getDayIds()) {
@@ -458,6 +516,7 @@ class App {
   #eventsContainer;
   #dayElements;
   #stageElements;
+  #nowButton;
 
   #schedule;
 
@@ -466,6 +525,7 @@ class App {
   #dayId;
   #enabledStageIds;
   #scrollPosition;
+  #dayIdCurrentTime;
 
   constructor(daysContainer, stagesContainer, eventsContainer, schedule) {
     this.#daysContainer = daysContainer;
@@ -499,13 +559,6 @@ class App {
     // Call the setDayId method to update the entire UI to the set day.
     this.#setDayId(this.#dayId);
 
-    // Add a timer to update the current time lines every 30 seconds.
-    window.setInterval(() => this.#updateCurrentTimeLines(), 30 * 1000);
-    // Since timers do not continue to run when the window is out of focus, also
-    // update the current time lines when the window is focused.
-    window.addEventListener("focus", () => {
-      this.#updateCurrentTimeLines();
-    });
     // Save the scroll position when the user finishes scrolling, so it can be
     // restored the next time the page is opened.
     eventsContainer.addEventListener("scrollend", () => {
@@ -533,6 +586,37 @@ class App {
     this.#eventsContainer.addEventListener("wheel", (event) =>
       wheelCallback(this.#eventsContainer, event),
     );
+
+    // Clicking the "now" button should scroll to the current time.
+    this.#nowButton = document.querySelector("#button-now");
+    this.#nowButton.addEventListener("click", () => {
+      // If the current time is not in the schedule, do nothing (the button
+      // should be disabled anyway)...
+      if (!this.#dayIdCurrentTime) return;
+
+      // Set the current day and scroll to the current time line.
+      this.#setDayId(this.#dayIdCurrentTime);
+      const currentTimeLineElement =
+        this.#blockSchedule.getCurrentTimeLineElement(
+          this.#dayId,
+          this.#enabledStageIds,
+        );
+      currentTimeLineElement.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+      });
+    });
+
+    // Add a timer to update the current time lines every 30 seconds.
+    window.setInterval(() => this.#updateForCurrentTime(), 30 * 1000);
+    // Also run the callback once to update for the current time immediately.
+    this.#updateForCurrentTime();
+
+    // Since timers do not continue to run when the window is out of focus, also
+    // update the current time lines when the window is focused.
+    window.addEventListener("focus", () => {
+      this.#updateForCurrentTime();
+    });
   }
 
   // Saves the day and enabled stages to local storage.
@@ -620,6 +704,23 @@ class App {
       // Check whether the stage is enabled and add the appropriate class.
       const isSelected = this.#enabledStageIds.includes(stage.id);
       stageElement.classList.add(isSelected ? "active" : "inactive");
+    }
+  }
+
+  #updateForCurrentTime() {
+    this.#updateCurrentTimeLines();
+    // Check whether the "now" button should be shown. It should only be visible
+    // when the current time is within any day of the schedule. In this case,
+    // a dayId will be returned from the getDayIdForDateTime method.
+    const now = new Date();
+    this.#dayIdCurrentTime = this.#schedule.getDayIdForDateTime(
+      now,
+      this.#enabledStageIds,
+    );
+    if (this.#dayIdCurrentTime) {
+      this.#nowButton.classList.remove("unavailable");
+    } else {
+      this.#nowButton.classList.add("unavailable");
     }
   }
 
