@@ -1,26 +1,5 @@
 // Helper functions
 
-// Creates an element in a namespace with attributes.
-function createElement(tag, ns, attributes) {
-  const el = document.createElementNS(ns, tag);
-  if (attributes) {
-    for (const [key, value] of Object.entries(attributes)) {
-      el.setAttribute(key, value);
-    }
-  }
-  return el;
-}
-
-// Creates an SVG element with attributes.
-function createSvgElement(tag, attributes) {
-  return createElement(tag, "http://www.w3.org/2000/svg", attributes);
-}
-
-// Creates an XHTML element with attributes.
-function createXhtmlElement(tag, attributes) {
-  return createElement(tag, "http://www.w3.org/1999/xhtml", attributes);
-}
-
 // Parses a time string in the format "HH:MM" and returns the number of minutes.
 function computeNumMinutes(time) {
   let [hours, minutes] = time.split(":").map((x) => parseInt(x));
@@ -270,7 +249,7 @@ class StageScheduleBuilder {
   // stage.
   buildStageSchedule() {
     // Create a root SVG element for this stage's block schedule.
-    const svg = createSvgElement("svg");
+    const svg = StageScheduleBuilder.#createSvgElement("svg");
 
     // Create groups for hour lines, blocks, the current time line and text.
     const gHourLines = this.#createHourLines();
@@ -295,10 +274,10 @@ class StageScheduleBuilder {
   // Creates a vertical line for each hour, just create all the lines we may
   // possibly show: from 00:00 until 00:00 the next day.
   #createHourLines() {
-    const gHourLines = createSvgElement("g");
+    const gHourLines = StageScheduleBuilder.#createSvgElement("g");
 
     for (let minute = 0; minute < 48 * 60; minute += 60) {
-      const line = createSvgElement("line", {
+      const line = StageScheduleBuilder.#createSvgElement("line", {
         x1: minute,
         y1: 0,
         x2: minute,
@@ -314,15 +293,18 @@ class StageScheduleBuilder {
   // Creates a vertical line for the current time, initialise it at 00:00, it
   // will be updated in the constructor of the StageSchedule.
   #createCurrentTimeLine() {
-    const gCurrentTime = createSvgElement("g");
-    const currentTimeLineElement = createSvgElement("line", {
-      x1: 0,
-      y1: 0,
-      x2: 0,
-      y2: this.#config.blockHeight.minutes,
-      stroke: this.#config.currentTimeLine.stroke,
-      "stroke-width": this.#config.currentTimeLine.strokeWidth,
-    });
+    const gCurrentTime = StageScheduleBuilder.#createSvgElement("g");
+    const currentTimeLineElement = StageScheduleBuilder.#createSvgElement(
+      "line",
+      {
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: this.#config.blockHeight.minutes,
+        stroke: this.#config.currentTimeLine.stroke,
+        "stroke-width": this.#config.currentTimeLine.strokeWidth,
+      },
+    );
     gCurrentTime.appendChild(currentTimeLineElement);
 
     // Store the line element in an object, along with the reference time of
@@ -341,8 +323,8 @@ class StageScheduleBuilder {
   // separate groups, since they need to be layered differently with respect to
   // the hour and current time lines.
   #createBlocks() {
-    const gBlocks = createSvgElement("g");
-    const gText = createSvgElement("g");
+    const gBlocks = StageScheduleBuilder.#createSvgElement("g");
+    const gText = StageScheduleBuilder.#createSvgElement("g");
     for (const event of this.#events) {
       const xStart = computeNumMinutes(event.start);
       const xEnd = computeNumMinutes(event.end);
@@ -359,7 +341,7 @@ class StageScheduleBuilder {
 
   // Creates a single block for an event.
   #createBlock(xStart, width, event) {
-    const rect = createSvgElement("rect", {
+    const rect = StageScheduleBuilder.#createSvgElement("rect", {
       x: xStart,
       y: 0,
       width: width,
@@ -382,22 +364,25 @@ class StageScheduleBuilder {
   // times. This ensure that we can more easily have nicely wrapping text, and
   // smaller time text under the artist name.
   #createBlockText(xStart, width, event) {
-    const foreignObject = createSvgElement("foreignObject", {
-      x: xStart,
-      y: 0,
-      width: width,
-      height: this.#config.blockHeight.minutes,
-    });
+    const foreignObject = StageScheduleBuilder.#createSvgElement(
+      "foreignObject",
+      {
+        x: xStart,
+        y: 0,
+        width: width,
+        height: this.#config.blockHeight.minutes,
+      },
+    );
     foreignObject.classList.add("block-text");
     // Create wrapping flexbox div to layout the artist name and time.
-    const textContainerDiv = createXhtmlElement("div");
+    const textContainerDiv = StageScheduleBuilder.#createXhtmlElement("div");
     textContainerDiv.classList.add("text-container");
 
     // Add the artist name and time to this div.
-    const nameDiv = createXhtmlElement("div");
+    const nameDiv = StageScheduleBuilder.#createXhtmlElement("div");
     nameDiv.classList.add("artist-name");
     nameDiv.textContent = event.name;
-    const timeDiv = createXhtmlElement("div");
+    const timeDiv = StageScheduleBuilder.#createXhtmlElement("div");
     timeDiv.classList.add("time");
     timeDiv.textContent = `${event.start} – ${event.end}`;
 
@@ -406,6 +391,35 @@ class StageScheduleBuilder {
     foreignObject.appendChild(textContainerDiv);
 
     return foreignObject;
+  }
+
+  // Creates an element in a namespace with attributes.
+  static #createElement(tag, ns, attributes) {
+    const el = document.createElementNS(ns, tag);
+    if (attributes) {
+      for (const [key, value] of Object.entries(attributes)) {
+        el.setAttribute(key, value);
+      }
+    }
+    return el;
+  }
+
+  // Creates an SVG element with attributes.
+  static #createSvgElement(tag, attributes) {
+    return StageScheduleBuilder.#createElement(
+      tag,
+      "http://www.w3.org/2000/svg",
+      attributes,
+    );
+  }
+
+  // Creates an XHTML element with attributes.
+  static #createXhtmlElement(tag, attributes) {
+    return StageScheduleBuilder.#createElement(
+      tag,
+      "http://www.w3.org/1999/xhtml",
+      attributes,
+    );
   }
 }
 
