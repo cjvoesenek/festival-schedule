@@ -536,8 +536,8 @@ class BlockSchedule {
 
   #mapCurrentStages(dayId, enabledStageIds, func) {
     const stageSchedules = this.#stageSchedules.get(dayId);
-    const availableStageIds = enabledStageIds.filter((stageId) =>
-      stageSchedules.has(stageId),
+    const availableStageIds = Array.from(stageSchedules.keys()).filter(
+      (stageId) => enabledStageIds.includes(stageId),
     );
     return availableStageIds.map((stageId) =>
       func(stageSchedules.get(stageId)),
