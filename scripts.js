@@ -148,7 +148,7 @@ class Schedule {
       hours += 24;
     }
     // Compute the number of milliseconds since the reference time.
-    const milliseconds = hours * 60 * 60 * 1000 + minutes * 60 * 1000;
+    const milliseconds = (hours * 60 + minutes) * 60 * 1000;
 
     // Create a new date from the reference time and the offset.
     return new Date(reference.getTime() + milliseconds);
