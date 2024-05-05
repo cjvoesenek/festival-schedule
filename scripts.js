@@ -156,7 +156,9 @@ class Schedule {
 
   // Parses a date string in the format "YYYY-MM-DD" and returns a Date object.
   static #parseDate(date) {
-    // This assumes that the date is in the current time zone, which should be OK.
+    // This assumes that the date is in the current time zone, which should be
+    // OK; the schedule is only relevant if you are in the same time zone
+    // anyway...
     const parsed = new Date(date);
     // Set the time to 00:00:00.000.
     parsed.setHours(0, 0, 0, 0);
