@@ -138,6 +138,10 @@ class Schedule {
     return ranges;
   }
 
+  // Converts a date and time to a Date object.
+  //
+  // The date is expected to be in the format "YYYY-MM-DD" and the time in
+  // "hh:mm".
   #convertToJSDate(date, time) {
     const reference = Schedule.#parseDate(date);
 
