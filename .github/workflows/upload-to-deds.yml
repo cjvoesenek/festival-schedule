@@ -15,4 +15,4 @@ jobs:
         with:
           username: ${{ secrets.DEDS_USERNAME }}
           password: ${{ secrets.DEDS_PASSWORD }}
-          files: index.html main.css scripts.js schedule.json
+          files: index.html main.css scripts.js bks2024.json
