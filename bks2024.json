@@ -193,7 +193,7 @@
           {
             "start": "20:00",
             "end": "21:00",
-            "name": "St. Paul (without the Broken Bones) B2B St. Paul",
+            "name": "St. Paul & the Broken Bones B2B St. Paul",
             "url": "https://www.bestkeptsecret.nl/program/st-paul-the-broken-bones-b2b-st-paul/60259"
           },
           {
@@ -300,12 +300,14 @@
           {
             "start": "15:00",
             "end": "16:00",
-            "name": "Session 1 (TBA)"
+            "name": "Upchuck",
+            "url": "https://www.bestkeptsecret.nl/program/upchuck/51460"
           },
           {
             "start": "17:15",
             "end": "18:15",
-            "name": "Session 2 (TBA)"
+            "name": "Katy Kirby",
+            "url": "https://www.bestkeptsecret.nl/program/katy-kirby/49802"
           },
           {
             "start": "19:30",
@@ -481,14 +483,14 @@
           {
             "start": "19:30",
             "end": "20:30",
-            "name": "Malou",
-            "url": "https://www.bestkeptsecret.nl/program/malou/60280"
+            "name": "Joes Brauers (Dutch Masters DJ set)",
+            "url": "https://www.bestkeptsecret.nl/program/joes-brauers-dutch-masters-dj-set/60275"
           },
           {
             "start": "21:00",
             "end": "22:00",
-            "name": "Joes Brauers (Dutch Masters DJ set)",
-            "url": "https://www.bestkeptsecret.nl/program/joes-brauers-dutch-masters-dj-set/60275"
+            "name": "Malou",
+            "url": "https://www.bestkeptsecret.nl/program/malou/60280"
           },
           {
             "start": "23:00",
@@ -513,7 +515,8 @@
           {
             "start": "14:00",
             "end": "14:45",
-            "name": "T.B.A."
+            "name": "Winter",
+            "url": "https://www.bestkeptsecret.nl/program/winter/71343"
           },
           {
             "start": "16:00",
@@ -548,7 +551,8 @@
           {
             "start": "00:45",
             "end": "04:00",
-            "name": "Loose Ends DJ's"
+            "name": "Loose Ends DJ's",
+            "url": "https://www.bestkeptsecret.nl/program/loose-ends-djs/70331"
           }
         ],
         "coney-island": [
@@ -593,12 +597,14 @@
           {
             "start": "13:00",
             "end": "14:00",
-            "name": "Session 1 (TBA)"
+            "name": "Library Card",
+            "url": "https://www.bestkeptsecret.nl/program/library-card/49877"
           },
           {
             "start": "15:00",
             "end": "16:00",
-            "name": "Session 2 (TBA)"
+            "name": "Faux Real",
+            "url": "https://www.bestkeptsecret.nl/program/faux-real/51408"
           },
           {
             "start": "17:00",
@@ -655,7 +661,8 @@
           {
             "start": "12:00",
             "end": "12:45",
-            "name": "T.B.A."
+            "name": "Pip Blom",
+            "url": "https://www.bestkeptsecret.nl/program/pip-blom/71337"
           },
           {
             "start": "13:15",
@@ -704,8 +711,8 @@
           {
             "start": "13:15",
             "end": "14:00",
-            "name": "Julie Byrne",
-            "url": "https://www.bestkeptsecret.nl/program/julie-byrne/49794"
+            "name": "néomí",
+            "url": "https://www.bestkeptsecret.nl/program/neomi/60252"
           },
           {
             "start": "14:30",
@@ -766,14 +773,14 @@
           {
             "start": "16:30",
             "end": "17:30",
-            "name": "Hauptgast",
-            "url": "https://www.bestkeptsecret.nl/program/hauptgast/50193"
+            "name": "Unruly Phoenix (3 step set)",
+            "url": "https://www.bestkeptsecret.nl/program/unruly-phoenix-3-step-set/50213"
           },
           {
             "start": "18:00",
             "end": "19:00",
-            "name": "Unruly Phoenix (3 step set)",
-            "url": "https://www.bestkeptsecret.nl/program/unruly-phoenix-3-step-set/50213"
+            "name": "Hauptgast",
+            "url": "https://www.bestkeptsecret.nl/program/hauptgast/50193"
           },
           {
             "start": "19:30",
@@ -861,12 +868,14 @@
           {
             "start": "14:30",
             "end": "15:30",
-            "name": "Session 2 (TBA)"
+            "name": "Ali",
+            "url": "https://www.bestkeptsecret.nl/program/ali/60212"
           },
           {
             "start": "16:30",
             "end": "17:30",
-            "name": "Session 3 (TBA)"
+            "name": "Gurriers",
+            "url": "https://www.bestkeptsecret.nl/program/gurriers/60200"
           },
           {
             "start": "18:30",
@@ -877,8 +886,8 @@
           {
             "start": "21:15",
             "end": "22:00",
-            "name": "néomí",
-            "url": "https://www.bestkeptsecret.nl/program/neomi/60252"
+            "name": "Parker Fans",
+            "url": "https://www.bestkeptsecret.nl/program/parker-fans/72213"
           }
         ]
       }
