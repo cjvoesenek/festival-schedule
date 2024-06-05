@@ -826,7 +826,7 @@ class App {
 }
 
 async function main() {
-  const schedule = await Schedule.fetch("schedule.json");
+  const schedule = await Schedule.fetch("bks2024.json");
 
   const daysContainer = document.querySelector("#days");
   const stagesContainer = document.querySelector("#stages");
