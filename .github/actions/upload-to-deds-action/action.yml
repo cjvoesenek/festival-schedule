@@ -7,7 +7,7 @@ inputs:
     description: Password for DeDS
     required: true
   files:
-    description: File to upload
+    description: Files to upload
     required: true
 runs:
   using: docker

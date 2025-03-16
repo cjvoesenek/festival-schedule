@@ -1,0 +1,21 @@
+name: Build and lint
+
+on: push
+
+jobs:
+  build-and-lint:
+    name: Build and lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+      - name: Build and lint application
+        run: |
+          npm ci
+          npm run build
+          npm run lint
