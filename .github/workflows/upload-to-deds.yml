@@ -1,8 +1,6 @@
 name: Deploy to DeDS
 
-on:
-  release:
-    types: [published]
+on: push
 
 jobs:
   deploy-to-deds:
@@ -24,4 +22,4 @@ jobs:
         with:
           username: ${{ secrets.DEDS_USERNAME }}
           password: ${{ secrets.DEDS_PASSWORD }}
-          files: dist/*
+          files: index.html
