@@ -1,18 +1,27 @@
-name: deploy-to-deds
-run-name: Deploy to DeDS
+name: Deploy to DeDS
+
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
+
 jobs:
   deploy-to-deds:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+      - name: Build application
+        run: |
+          npm ci
+          npm run build
       - name: Upload files to DeDS
         uses: ./.github/actions/upload-to-deds-action
         with:
           username: ${{ secrets.DEDS_USERNAME }}
           password: ${{ secrets.DEDS_PASSWORD }}
-          files: index.html main.css scripts.js bks2024.json
+          files: dist/*
