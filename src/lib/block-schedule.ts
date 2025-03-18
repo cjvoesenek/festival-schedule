@@ -23,6 +23,9 @@ export class BlockSchedule {
 
     this.schedule = schedule;
     this.stageSchedules = this.generateStageSchedules(schedule);
+
+    this.createHourLines();
+    this.addStageSchedules();
     this.currentTimeLine = this.createCurrentTimeLine();
 
     this.updateBlockSchedule(dayId, enabledStageIds);
@@ -154,9 +157,6 @@ export class BlockSchedule {
     schedule: Schedule,
   ): Map<string, Map<string, StageSchedule>> {
     const stageSchedules: Map<string, Map<string, StageSchedule>> = new Map();
-    const group = createSvgElement("g");
-    this.svg.appendChild(group);
-
     for (const dayId of schedule.getDayIds()) {
       const currentStageSchedules: Map<string, StageSchedule> = new Map();
       stageSchedules.set(dayId, currentStageSchedules);
@@ -167,10 +167,52 @@ export class BlockSchedule {
           stageId,
         );
         currentStageSchedules.set(stageId, stageSchedule);
-        group.appendChild(stageSchedule.element);
       }
     }
     return stageSchedules;
+  }
+
+  private getMaximumHeight(): number {
+    const maxNumStages = Math.max(
+      ...Array.from(this.stageSchedules.values()).map(
+        (schedules) => schedules.size,
+      ),
+    );
+    return this.schedule.getConfig().blockHeight.coords * maxNumStages;
+  }
+
+  // Creates a vertical line for each hour, just create all the lines we may
+  // possibly show: from 00:00 until 00:00 the next day.
+  private createHourLines(): void {
+    const group = createSvgElement<SVGGElement>("g");
+    this.svg.appendChild(group);
+
+    const hours = StageSchedule.getHourCoordinates();
+    for (let x = hours.start; x < hours.end; x += hours.step) {
+      const line = createSvgElement<SVGLineElement>("line", {
+        x1: x.toString(),
+        y1: "0",
+        x2: x.toString(),
+        y2: this.getMaximumHeight().toString(),
+      });
+      line.classList.add("hour");
+      group.appendChild(line);
+    }
+  }
+
+  private addStageSchedules(): void {
+    const group = createSvgElement("g");
+    this.svg.appendChild(group);
+
+    for (const dayId of this.stageSchedules.keys()) {
+      const daySchedule = this.stageSchedules.get(dayId);
+      if (!daySchedule) continue;
+      for (const stageId of daySchedule.keys()) {
+        const stageSchedule = daySchedule.get(stageId);
+        if (!stageSchedule) continue;
+        group.appendChild(stageSchedule.element);
+      }
+    }
   }
 
   private createCurrentTimeLine(): SVGLineElement {
@@ -180,18 +222,11 @@ export class BlockSchedule {
     // Create a line indicating the current time. We set its height based on the
     // maximum height the schedule can attain; if fewer stages are selected, the
     // rest will just be outside the viewBox.
-    const maxNumStages = Math.max(
-      ...Array.from(this.stageSchedules.values()).map(
-        (schedules) => schedules.size,
-      ),
-    );
-    const height = this.schedule.getConfig().blockHeight.coords * maxNumStages;
-
     const currentTimeLineElement = createSvgElement<SVGLineElement>("line", {
       x1: "0",
       y1: "0",
       x2: "0",
-      y2: height.toString(),
+      y2: this.getMaximumHeight().toString(),
     });
     currentTimeLineElement.classList.add("current-time");
     group.appendChild(currentTimeLineElement);

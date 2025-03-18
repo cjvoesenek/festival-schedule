@@ -74,12 +74,10 @@ class StageScheduleBuilder {
     const group = createSvgElement<SVGGElement>("g");
 
     // Create groups for hour lines, blocks, the current time line and text.
-    const gHourLines = this.createHourLines();
     const [gBlocks, gText] = this.createBlocks();
 
     // Append the groups in a specific order to ensure they are layered
     // appropriately (from bottom to top).
-    group.appendChild(gHourLines);
     group.appendChild(gBlocks);
     group.appendChild(gText);
 
@@ -89,26 +87,6 @@ class StageScheduleBuilder {
     ) as [number, number];
 
     return new StageSchedule(group, rangeInCoords);
-  }
-
-  // Creates a vertical line for each hour, just create all the lines we may
-  // possibly show: from 00:00 until 00:00 the next day.
-  private createHourLines(): SVGGElement {
-    const config = this.schedule.getConfig();
-    const gHourLines = createSvgElement<SVGGElement>("g");
-
-    const hours = StageSchedule.getHourCoordinates();
-    for (let x = hours.start; x < hours.end; x += hours.step) {
-      const line = createSvgElement<SVGLineElement>("line", {
-        x1: x.toString(),
-        y1: "0",
-        x2: x.toString(),
-        y2: config.blockHeight.coords.toString(),
-      });
-      line.classList.add("hour");
-      gHourLines.appendChild(line);
-    }
-    return gHourLines;
   }
 
   // Creates blocks for each event.
