@@ -1,4 +1,5 @@
-import type { BlockHeightConfig, ScheduleEvent } from "./config";
+import type { ScheduleEvent } from "./config";
+import { createSvgElement, createXhtmlElement } from "./dom";
 import type { Schedule } from "./schedule";
 
 interface CurrentTimeLine {
@@ -17,44 +18,22 @@ interface HourCoordinates {
 // This class represents a block schedule for a single stage on a single day as
 // an SVG element.
 export class StageSchedule {
-  readonly svg: SVGSVGElement;
+  readonly element: SVGGElement;
   readonly rangeInCoords: [number, number];
 
   private currentTimeLine: CurrentTimeLine;
-  private blockHeight: BlockHeightConfig;
 
   constructor(
-    svg: SVGSVGElement,
+    group: SVGGElement,
     currentTimeLine: CurrentTimeLine,
-    blockHeight: BlockHeightConfig,
     rangeInCoords: [number, number],
   ) {
-    this.svg = svg;
+    this.element = group;
     this.currentTimeLine = currentTimeLine;
-    this.blockHeight = blockHeight;
     this.rangeInCoords = rangeInCoords;
 
     // Set the current time line to the current time.
     this.updateCurrentTimeLine();
-  }
-
-  // Clips the SVG to a specific range of coordinates.
-  //
-  // This also sets the width and height of the SVG appropriately.
-  clip(startCoords: number, endCoords: number): void {
-    const widthCoords = endCoords - startCoords;
-    const heightCoords = this.blockHeight.coords;
-
-    const widthPixels =
-      (widthCoords / this.blockHeight.coords) * this.blockHeight.pixels;
-    const heightPixels = this.blockHeight.pixels;
-
-    this.svg.setAttribute(
-      "viewBox",
-      `${startCoords} 0 ${widthCoords} ${heightCoords}`,
-    );
-    this.svg.setAttribute("width", widthPixels.toString());
-    this.svg.setAttribute("height", heightPixels.toString());
   }
 
   // Updates the current time line to the current time.
@@ -126,7 +105,7 @@ class StageScheduleBuilder {
   // stage.
   buildStageSchedule(): StageSchedule {
     // Create a root SVG element for this stage's block schedule.
-    const svg = StageScheduleBuilder.createSvgElement<SVGSVGElement>("svg");
+    const group = createSvgElement<SVGGElement>("g");
 
     // Create groups for hour lines, blocks, the current time line and text.
     const gHourLines = this.createHourLines();
@@ -135,41 +114,33 @@ class StageScheduleBuilder {
 
     // Append the groups in a specific order to ensure they are layered
     // appropriately (from bottom to top).
-    svg.appendChild(gHourLines);
-    svg.appendChild(gBlocks);
-    svg.appendChild(gCurrentTime);
-    svg.appendChild(gText);
+    group.appendChild(gHourLines);
+    group.appendChild(gBlocks);
+    group.appendChild(gCurrentTime);
+    group.appendChild(gText);
 
     const range = this.schedule.getRangeForStage(this.dayId, this.stageId);
     const rangeInCoords = range.map((time) =>
       StageSchedule.toSvgCoordinates(this.referenceTime, time),
     ) as [number, number];
 
-    return new StageSchedule(
-      svg,
-      currentTimeLine,
-      { ...this.schedule.getConfig().blockHeight },
-      rangeInCoords,
-    );
+    return new StageSchedule(group, currentTimeLine, rangeInCoords);
   }
 
   // Creates a vertical line for each hour, just create all the lines we may
   // possibly show: from 00:00 until 00:00 the next day.
   private createHourLines(): SVGGElement {
     const config = this.schedule.getConfig();
-    const gHourLines = StageScheduleBuilder.createSvgElement<SVGGElement>("g");
+    const gHourLines = createSvgElement<SVGGElement>("g");
 
     const hours = StageSchedule.getHourCoordinates();
     for (let x = hours.start; x < hours.end; x += hours.step) {
-      const line = StageScheduleBuilder.createSvgElement<SVGLineElement>(
-        "line",
-        {
-          x1: x.toString(),
-          y1: "0",
-          x2: x.toString(),
-          y2: config.blockHeight.coords.toString(),
-        },
-      );
+      const line = createSvgElement<SVGLineElement>("line", {
+        x1: x.toString(),
+        y1: "0",
+        x2: x.toString(),
+        y2: config.blockHeight.coords.toString(),
+      });
       line.classList.add("hour");
       gHourLines.appendChild(line);
     }
@@ -181,15 +152,13 @@ class StageScheduleBuilder {
   private createCurrentTimeLine(): [SVGGElement, CurrentTimeLine] {
     const config = this.schedule.getConfig();
 
-    const gCurrentTime =
-      StageScheduleBuilder.createSvgElement<SVGGElement>("g");
-    const currentTimeLineElement =
-      StageScheduleBuilder.createSvgElement<SVGLineElement>("line", {
-        x1: "0",
-        y1: "0",
-        x2: "0",
-        y2: config.blockHeight.coords.toString(),
-      });
+    const gCurrentTime = createSvgElement<SVGGElement>("g");
+    const currentTimeLineElement = createSvgElement<SVGLineElement>("line", {
+      x1: "0",
+      y1: "0",
+      x2: "0",
+      y2: config.blockHeight.coords.toString(),
+    });
     currentTimeLineElement.classList.add("current-time");
     gCurrentTime.appendChild(currentTimeLineElement);
 
@@ -210,8 +179,8 @@ class StageScheduleBuilder {
   // separate groups, since they need to be layered differently with respect to
   // the hour and current time lines.
   private createBlocks(): [SVGGElement, SVGGElement] {
-    const gBlocks = StageScheduleBuilder.createSvgElement<SVGGElement>("g");
-    const gText = StageScheduleBuilder.createSvgElement<SVGGElement>("g");
+    const gBlocks = createSvgElement<SVGGElement>("g");
+    const gText = createSvgElement<SVGGElement>("g");
 
     const events = this.schedule.getEvents(this.dayId, this.stageId);
     for (const event of events) {
@@ -236,7 +205,7 @@ class StageScheduleBuilder {
     event: ScheduleEvent,
   ): SVGRectElement {
     const config = this.schedule.getConfig();
-    const rect = StageScheduleBuilder.createSvgElement<SVGRectElement>("rect", {
+    const rect = createSvgElement<SVGRectElement>("rect", {
       x: xStart.toString(),
       y: "0",
       width: width.toString(),
@@ -262,29 +231,25 @@ class StageScheduleBuilder {
     event: ScheduleEvent,
   ): SVGForeignObjectElement {
     const config = this.schedule.getConfig();
-    const foreignObject =
-      StageScheduleBuilder.createSvgElement<SVGForeignObjectElement>(
-        "foreignObject",
-        {
-          x: xStart.toString(),
-          y: "0",
-          width: width.toString(),
-          height: config.blockHeight.coords.toString(),
-        },
-      );
+    const foreignObject = createSvgElement<SVGForeignObjectElement>(
+      "foreignObject",
+      {
+        x: xStart.toString(),
+        y: "0",
+        width: width.toString(),
+        height: config.blockHeight.coords.toString(),
+      },
+    );
     foreignObject.classList.add("block-text");
     // Create wrapping flexbox div to layout the artist name and time.
-    const textContainerDiv =
-      StageScheduleBuilder.createXhtmlElement<HTMLDivElement>("div");
+    const textContainerDiv = createXhtmlElement<HTMLDivElement>("div");
     textContainerDiv.classList.add("text-container");
 
     // Add the artist name and time to this div.
-    const nameDiv =
-      StageScheduleBuilder.createXhtmlElement<HTMLDivElement>("div");
+    const nameDiv = createXhtmlElement<HTMLDivElement>("div");
     nameDiv.classList.add("artist-name");
     nameDiv.textContent = event.name;
-    const timeDiv =
-      StageScheduleBuilder.createXhtmlElement<HTMLDivElement>("div");
+    const timeDiv = createXhtmlElement<HTMLDivElement>("div");
     timeDiv.classList.add("time");
     timeDiv.textContent = `${event.start} – ${event.end}`;
 
@@ -293,44 +258,5 @@ class StageScheduleBuilder {
     foreignObject.appendChild(textContainerDiv);
 
     return foreignObject;
-  }
-
-  // Creates an element in a namespace with attributes.
-  private static createElement(
-    tag: string,
-    ns: string,
-    attributes?: Record<string, string>,
-  ): Element {
-    const el = document.createElementNS(ns, tag);
-    if (attributes) {
-      for (const [key, value] of Object.entries(attributes)) {
-        el.setAttribute(key, value);
-      }
-    }
-    return el;
-  }
-
-  // Creates an SVG element with attributes.
-  private static createSvgElement<T extends SVGElement>(
-    tag: string,
-    attributes?: Record<string, string>,
-  ): T {
-    return StageScheduleBuilder.createElement(
-      tag,
-      "http://www.w3.org/2000/svg",
-      attributes,
-    ) as T;
-  }
-
-  // Creates an XHTML element with attributes.
-  private static createXhtmlElement<T extends HTMLElement>(
-    tag: string,
-    attributes?: Record<string, string>,
-  ): T {
-    return StageScheduleBuilder.createElement(
-      tag,
-      "http://www.w3.org/1999/xhtml",
-      attributes,
-    ) as T;
   }
 }

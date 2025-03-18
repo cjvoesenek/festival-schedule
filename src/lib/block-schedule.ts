@@ -1,3 +1,5 @@
+import type { BlockHeightConfig } from "./config";
+import { createSvgElement } from "./dom";
 import type { Schedule } from "./schedule";
 import { StageSchedule } from "./stage-schedule";
 
@@ -6,7 +8,8 @@ import { StageSchedule } from "./stage-schedule";
 // This class represents a block schedule for a single day, for a certain
 // selection of stages.
 export class BlockSchedule {
-  private container: HTMLElement;
+  private svg: SVGSVGElement;
+  private blockHeight: BlockHeightConfig;
   private stageSchedules: Map<string, Map<string, StageSchedule>>;
 
   constructor(
@@ -15,7 +18,10 @@ export class BlockSchedule {
     dayId: string,
     enabledStageIds: string[],
   ) {
-    this.container = container;
+    this.svg = createSvgElement<SVGSVGElement>("svg");
+    container.appendChild(this.svg);
+
+    this.blockHeight = schedule.getConfig().blockHeight;
     this.stageSchedules = BlockSchedule.generateStageSchedules(schedule);
     this.updateBlockSchedule(dayId, enabledStageIds);
   }
@@ -23,15 +29,17 @@ export class BlockSchedule {
   updateBlockSchedule(dayId: string, enabledStageIds: string[]): void {
     // Clip the block schedule to the start and end of the current selection of
     // day and stages.
-    const [startCoord, endCoord] = this.computeCurrentRangeInCoords(
-      dayId,
-      enabledStageIds,
-    );
+    this.clipToCurrentRange(dayId, enabledStageIds);
 
-    this.clearContainer();
-    this.mapCurrentStages(dayId, enabledStageIds, (stageSchedule) => {
-      stageSchedule.clip(startCoord, endCoord);
-      this.container.appendChild(stageSchedule.svg);
+    this.clearSvg();
+    this.mapCurrentStages(dayId, enabledStageIds, (stageSchedule, index) => {
+      const stageElement = stageSchedule.element;
+      // Translate to the appropriate vertical position for the current
+      // selection of stages.
+      const yStage = index * this.blockHeight.coords;
+      stageElement.setAttribute("transform", `translate(0, ${yStage})`);
+
+      this.svg.appendChild(stageElement);
     });
   }
 
@@ -57,10 +65,10 @@ export class BlockSchedule {
   }
 
   // Clears all children from an element.
-  clearContainer(): void {
-    const container = this.container;
-    while (container.lastChild) {
-      container.removeChild(container.lastChild);
+  clearSvg(): void {
+    const svg = this.svg;
+    while (svg.lastChild) {
+      svg.removeChild(svg.lastChild);
     }
   }
 
@@ -78,10 +86,50 @@ export class BlockSchedule {
     return [start, end];
   }
 
+  private computeCurrentNumberOfAvailableStages(
+    dayId: string,
+    enabledStageIds: string[],
+  ): number {
+    const stageSchedule = this.stageSchedules.get(dayId);
+    if (!stageSchedule) return 0;
+    return Array.from(stageSchedule.keys()).filter((stageId) =>
+      enabledStageIds.includes(stageId),
+    ).length;
+  }
+
+  // Clips the SVG to a specific range of coordinates.
+  //
+  // This also sets the width and height of the SVG appropriately.
+  private clipToCurrentRange(dayId: string, enabledStageIds: string[]): void {
+    const [startCoord, endCoord] = this.computeCurrentRangeInCoords(
+      dayId,
+      enabledStageIds,
+    );
+
+    const blockHeight = this.blockHeight;
+    const numStages = this.computeCurrentNumberOfAvailableStages(
+      dayId,
+      enabledStageIds,
+    );
+
+    const widthCoords = endCoord - startCoord;
+    const heightCoords = numStages * blockHeight.coords;
+
+    const widthPixels = (widthCoords / blockHeight.coords) * blockHeight.pixels;
+    const heightPixels = numStages * blockHeight.pixels;
+
+    this.svg.setAttribute(
+      "viewBox",
+      `${startCoord} 0 ${widthCoords} ${heightCoords}`,
+    );
+    this.svg.setAttribute("width", widthPixels.toString());
+    this.svg.setAttribute("height", heightPixels.toString());
+  }
+
   private mapCurrentStages<T>(
     dayId: string,
     enabledStageIds: string[],
-    func: (schedule: StageSchedule) => T,
+    func: (schedule: StageSchedule, index: number) => T,
   ): T[] {
     const stageSchedules = this.stageSchedules.get(dayId);
     if (!stageSchedules) {
@@ -91,14 +139,14 @@ export class BlockSchedule {
     const availableStageIds = Array.from(stageSchedules.keys()).filter(
       (stageId) => enabledStageIds.includes(stageId),
     );
-    return availableStageIds.map((stageId) => {
+    return availableStageIds.map((stageId, index) => {
       const currentSchedule = stageSchedules.get(stageId);
       if (!currentSchedule) {
         throw new Error(
           `No schedule for stage with ID "${stageId}" exists for day with ID "${dayId}".`,
         );
       }
-      return func(currentSchedule);
+      return func(currentSchedule, index);
     });
   }
 
