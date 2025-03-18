@@ -154,6 +154,9 @@ export class BlockSchedule {
     schedule: Schedule,
   ): Map<string, Map<string, StageSchedule>> {
     const stageSchedules: Map<string, Map<string, StageSchedule>> = new Map();
+    const group = createSvgElement("g");
+    this.svg.appendChild(group);
+
     for (const dayId of schedule.getDayIds()) {
       const currentStageSchedules: Map<string, StageSchedule> = new Map();
       stageSchedules.set(dayId, currentStageSchedules);
@@ -164,7 +167,7 @@ export class BlockSchedule {
           stageId,
         );
         currentStageSchedules.set(stageId, stageSchedule);
-        this.svg.appendChild(stageSchedule.element);
+        group.appendChild(stageSchedule.element);
       }
     }
     return stageSchedules;
