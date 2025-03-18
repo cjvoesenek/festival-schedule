@@ -22,7 +22,7 @@ export class BlockSchedule {
     container.appendChild(this.svg);
 
     this.blockHeight = schedule.getConfig().blockHeight;
-    this.stageSchedules = BlockSchedule.generateStageSchedules(schedule);
+    this.stageSchedules = this.generateStageSchedules(schedule);
     this.updateBlockSchedule(dayId, enabledStageIds);
   }
 
@@ -40,8 +40,6 @@ export class BlockSchedule {
       stageElement.setAttribute("transform", `translate(0, ${yStage})`);
       // Unhide the enabled stages.
       stageElement.setAttribute("display", "inline");
-
-      this.svg.appendChild(stageElement);
     });
   }
 
@@ -152,7 +150,7 @@ export class BlockSchedule {
     });
   }
 
-  private static generateStageSchedules(
+  private generateStageSchedules(
     schedule: Schedule,
   ): Map<string, Map<string, StageSchedule>> {
     const stageSchedules: Map<string, Map<string, StageSchedule>> = new Map();
@@ -160,10 +158,13 @@ export class BlockSchedule {
       const currentStageSchedules: Map<string, StageSchedule> = new Map();
       stageSchedules.set(dayId, currentStageSchedules);
       for (const stageId of schedule.getStageIds(dayId)) {
-        currentStageSchedules.set(
+        const stageSchedule = StageSchedule.fromSchedule(
+          schedule,
+          dayId,
           stageId,
-          StageSchedule.fromSchedule(schedule, dayId, stageId),
         );
+        currentStageSchedules.set(stageId, stageSchedule);
+        this.svg.appendChild(stageSchedule.element);
       }
     }
     return stageSchedules;
