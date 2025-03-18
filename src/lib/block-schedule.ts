@@ -31,13 +31,15 @@ export class BlockSchedule {
     // day and stages.
     this.clipToCurrentRange(dayId, enabledStageIds);
 
-    this.clearSvg();
+    this.hideAllStages();
     this.mapCurrentStages(dayId, enabledStageIds, (stageSchedule, index) => {
       const stageElement = stageSchedule.element;
       // Translate to the appropriate vertical position for the current
       // selection of stages.
       const yStage = index * this.blockHeight.coords;
       stageElement.setAttribute("transform", `translate(0, ${yStage})`);
+      // Unhide the enabled stages.
+      stageElement.setAttribute("display", "inline");
 
       this.svg.appendChild(stageElement);
     });
@@ -64,11 +66,11 @@ export class BlockSchedule {
     return elements[0] ?? null;
   }
 
-  // Clears all children from an element.
-  clearSvg(): void {
-    const svg = this.svg;
-    while (svg.lastChild) {
-      svg.removeChild(svg.lastChild);
+  hideAllStages(): void {
+    for (const daySchedule of this.stageSchedules.values()) {
+      for (const stageSchedule of daySchedule.values()) {
+        stageSchedule.element.setAttribute("display", "none");
+      }
     }
   }
 
