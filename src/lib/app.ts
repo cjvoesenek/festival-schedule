@@ -106,11 +106,7 @@ export class App {
       // Set the current day and scroll to the current time line.
       this.setDayId(this.dayIdCurrentTime);
       const currentTimeLineElement =
-        this.blockSchedule.getCurrentTimeLineElement(
-          this.dayId,
-          this.enabledStageIds,
-        );
-      if (!currentTimeLineElement) return;
+        this.blockSchedule.getCurrentTimeLineElement();
 
       currentTimeLineElement.scrollIntoView({
         behavior: "smooth",
@@ -232,7 +228,7 @@ export class App {
   }
 
   updateForCurrentTime(): void {
-    this.updateCurrentTimeLines();
+    this.updateCurrentTimeLine();
     // Check whether the "now" button should be shown. It should only be visible
     // when the current time is within any day of the schedule. In this case,
     // a dayId will be returned from the getDayIdForDateTime method.
@@ -248,8 +244,8 @@ export class App {
     }
   }
 
-  private updateCurrentTimeLines(): void {
-    this.blockSchedule.updateCurrentTimeLines(this.dayId, this.enabledStageIds);
+  private updateCurrentTimeLine(): void {
+    this.blockSchedule.updateCurrentTimeLine(this.dayId);
   }
 
   private setDayId(dayId: string): void {
@@ -264,7 +260,7 @@ export class App {
     // Update the stages and the block schedule.
     this.updateStages();
     this.blockSchedule.updateBlockSchedule(this.dayId, this.enabledStageIds);
-    this.updateCurrentTimeLines();
+    this.updateCurrentTimeLine();
 
     this.saveState();
   }

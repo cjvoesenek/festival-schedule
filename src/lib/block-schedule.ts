@@ -1,4 +1,3 @@
-import type { BlockHeightConfig } from "./config";
 import { createSvgElement } from "./dom";
 import type { Schedule } from "./schedule";
 import { StageSchedule } from "./stage-schedule";
@@ -9,8 +8,9 @@ import { StageSchedule } from "./stage-schedule";
 // selection of stages.
 export class BlockSchedule {
   private svg: SVGSVGElement;
-  private blockHeight: BlockHeightConfig;
+  private schedule: Schedule;
   private stageSchedules: Map<string, Map<string, StageSchedule>>;
+  private currentTimeLine: SVGLineElement;
 
   constructor(
     container: HTMLElement,
@@ -21,8 +21,10 @@ export class BlockSchedule {
     this.svg = createSvgElement<SVGSVGElement>("svg");
     container.appendChild(this.svg);
 
-    this.blockHeight = schedule.getConfig().blockHeight;
+    this.schedule = schedule;
     this.stageSchedules = this.generateStageSchedules(schedule);
+    this.currentTimeLine = this.createCurrentTimeLine();
+
     this.updateBlockSchedule(dayId, enabledStageIds);
   }
 
@@ -36,32 +38,30 @@ export class BlockSchedule {
       const stageElement = stageSchedule.element;
       // Translate to the appropriate vertical position for the current
       // selection of stages.
-      const yStage = index * this.blockHeight.coords;
+      const yStage = index * this.schedule.getConfig().blockHeight.coords;
       stageElement.setAttribute("transform", `translate(0, ${yStage})`);
       // Unhide the enabled stages.
       stageElement.setAttribute("display", "inline");
     });
   }
 
-  updateCurrentTimeLines(dayId: string, enabledStageIds: string[]): void {
-    this.mapCurrentStages(dayId, enabledStageIds, (stageSchedule) =>
-      stageSchedule.updateCurrentTimeLine(),
-    );
+  updateCurrentTimeLine(dayId: string): void {
+    const now = new Date();
+    const referenceTime = this.schedule.getReferenceTime(dayId);
+    const xNow = StageSchedule.toSvgCoordinates(referenceTime, now);
+
+    // If the current time is before the start of this day's schedule or after
+    // its end, the line will be out of bounds, and therefore clipped off.
+    const element = this.currentTimeLine;
+    element.setAttribute("x1", xNow.toString());
+    element.setAttribute("x2", xNow.toString());
   }
 
   // Returns the topmost current time line element for this schedule.
   //
   // This can be used to scroll to the current time.
-  getCurrentTimeLineElement(
-    dayId: string,
-    enabledStageIds: string[],
-  ): SVGLineElement | null {
-    const elements = this.mapCurrentStages(
-      dayId,
-      enabledStageIds,
-      (stageSchedule) => stageSchedule.getCurrentTimeLineElement(),
-    );
-    return elements[0] ?? null;
+  getCurrentTimeLineElement(): SVGLineElement {
+    return this.currentTimeLine;
   }
 
   hideAllStages(): void {
@@ -106,7 +106,7 @@ export class BlockSchedule {
       enabledStageIds,
     );
 
-    const blockHeight = this.blockHeight;
+    const blockHeight = this.schedule.getConfig().blockHeight;
     const numStages = this.computeCurrentNumberOfAvailableStages(
       dayId,
       enabledStageIds,
@@ -171,5 +171,31 @@ export class BlockSchedule {
       }
     }
     return stageSchedules;
+  }
+
+  private createCurrentTimeLine(): SVGLineElement {
+    const group = createSvgElement("g");
+    this.svg.appendChild(group);
+
+    // Create a line indicating the current time. We set its height based on the
+    // maximum height the schedule can attain; if fewer stages are selected, the
+    // rest will just be outside the viewBox.
+    const maxNumStages = Math.max(
+      ...Array.from(this.stageSchedules.values()).map(
+        (schedules) => schedules.size,
+      ),
+    );
+    const height = this.schedule.getConfig().blockHeight.coords * maxNumStages;
+
+    const currentTimeLineElement = createSvgElement<SVGLineElement>("line", {
+      x1: "0",
+      y1: "0",
+      x2: "0",
+      y2: height.toString(),
+    });
+    currentTimeLineElement.classList.add("current-time");
+    group.appendChild(currentTimeLineElement);
+
+    return currentTimeLineElement;
   }
 }

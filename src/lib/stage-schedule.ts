@@ -2,11 +2,6 @@ import type { ScheduleEvent } from "./config";
 import { createSvgElement, createXhtmlElement } from "./dom";
 import type { Schedule } from "./schedule";
 
-interface CurrentTimeLine {
-  referenceTime: Date;
-  element: SVGLineElement;
-}
-
 interface HourCoordinates {
   start: number;
   end: number;
@@ -21,38 +16,9 @@ export class StageSchedule {
   readonly element: SVGGElement;
   readonly rangeInCoords: [number, number];
 
-  private currentTimeLine: CurrentTimeLine;
-
-  constructor(
-    group: SVGGElement,
-    currentTimeLine: CurrentTimeLine,
-    rangeInCoords: [number, number],
-  ) {
+  constructor(group: SVGGElement, rangeInCoords: [number, number]) {
     this.element = group;
-    this.currentTimeLine = currentTimeLine;
     this.rangeInCoords = rangeInCoords;
-
-    // Set the current time line to the current time.
-    this.updateCurrentTimeLine();
-  }
-
-  // Updates the current time line to the current time.
-  updateCurrentTimeLine(): void {
-    const now = new Date();
-    const xNow = StageSchedule.toSvgCoordinates(
-      this.currentTimeLine.referenceTime,
-      now,
-    );
-
-    // If the current time is before the start of this day's schedule or after
-    // its end, the line will be out of bounds, and therefore clipped off.
-    const element = this.currentTimeLine.element;
-    element.setAttribute("x1", xNow.toString());
-    element.setAttribute("x2", xNow.toString());
-  }
-
-  getCurrentTimeLineElement(): SVGLineElement {
-    return this.currentTimeLine.element;
   }
 
   static fromSchedule(
@@ -109,14 +75,12 @@ class StageScheduleBuilder {
 
     // Create groups for hour lines, blocks, the current time line and text.
     const gHourLines = this.createHourLines();
-    const [gCurrentTime, currentTimeLine] = this.createCurrentTimeLine();
     const [gBlocks, gText] = this.createBlocks();
 
     // Append the groups in a specific order to ensure they are layered
     // appropriately (from bottom to top).
     group.appendChild(gHourLines);
     group.appendChild(gBlocks);
-    group.appendChild(gCurrentTime);
     group.appendChild(gText);
 
     const range = this.schedule.getRangeForStage(this.dayId, this.stageId);
@@ -124,7 +88,7 @@ class StageScheduleBuilder {
       StageSchedule.toSvgCoordinates(this.referenceTime, time),
     ) as [number, number];
 
-    return new StageSchedule(group, currentTimeLine, rangeInCoords);
+    return new StageSchedule(group, rangeInCoords);
   }
 
   // Creates a vertical line for each hour, just create all the lines we may
@@ -145,31 +109,6 @@ class StageScheduleBuilder {
       gHourLines.appendChild(line);
     }
     return gHourLines;
-  }
-
-  // Creates a vertical line for the current time, initialise it at 0, it
-  // will be updated in the constructor of the StageSchedule.
-  private createCurrentTimeLine(): [SVGGElement, CurrentTimeLine] {
-    const config = this.schedule.getConfig();
-
-    const gCurrentTime = createSvgElement<SVGGElement>("g");
-    const currentTimeLineElement = createSvgElement<SVGLineElement>("line", {
-      x1: "0",
-      y1: "0",
-      x2: "0",
-      y2: config.blockHeight.coords.toString(),
-    });
-    currentTimeLineElement.classList.add("current-time");
-    gCurrentTime.appendChild(currentTimeLineElement);
-
-    // Store the line element in an object, along with the reference time of
-    // this day.
-    const currentTimeLine: CurrentTimeLine = {
-      referenceTime: this.referenceTime,
-      element: currentTimeLineElement,
-    };
-
-    return [gCurrentTime, currentTimeLine];
   }
 
   // Creates blocks for each event.
