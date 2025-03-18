@@ -9,7 +9,7 @@ function main(): void {
   const daysContainer = document.querySelector("#days") as HTMLDivElement;
   const stagesContainer = document.querySelector("#stages") as HTMLDivElement;
   const eventsContainer = document.querySelector("#events") as HTMLDivElement;
-  const nowButton = document.querySelector("#now-button") as HTMLDivElement;
+  const nowButton = document.querySelector("#button-now") as HTMLDivElement;
 
   new App(daysContainer, stagesContainer, eventsContainer, nowButton, schedule);
 }
