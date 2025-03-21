@@ -106,11 +106,7 @@ export class App {
       // Set the current day and scroll to the current time line.
       this.setDayId(this.dayIdCurrentTime);
       const currentTimeLineElement =
-        this.blockSchedule.getCurrentTimeLineElement(
-          this.dayId,
-          this.enabledStageIds,
-        );
-      if (!currentTimeLineElement) return;
+        this.blockSchedule.getCurrentTimeLineElement();
 
       currentTimeLineElement.scrollIntoView({
         behavior: "smooth",
@@ -131,15 +127,12 @@ export class App {
   }
 
   // Saves the day and enabled stages to local storage.
-  private saveState(): void {
+  private saveSelectedDayAndStages(): void {
     localStorage.setItem("dayId", this.dayId);
     localStorage.setItem(
       "enabledStageIds",
       JSON.stringify(this.enabledStageIds),
     );
-    if (this.scrollPosition !== null) {
-      localStorage.setItem("scrollPosition", this.scrollPosition.toString());
-    }
   }
 
   // If present, loads the day and enabled stages from local storage.
@@ -232,7 +225,7 @@ export class App {
   }
 
   updateForCurrentTime(): void {
-    this.updateCurrentTimeLines();
+    this.blockSchedule.updateCurrentTimeLine(this.dayId);
     // Check whether the "now" button should be shown. It should only be visible
     // when the current time is within any day of the schedule. In this case,
     // a dayId will be returned from the getDayIdForDateTime method.
@@ -248,10 +241,6 @@ export class App {
     }
   }
 
-  private updateCurrentTimeLines(): void {
-    this.blockSchedule.updateCurrentTimeLines(this.dayId, this.enabledStageIds);
-  }
-
   private setDayId(dayId: string): void {
     this.dayId = dayId;
 
@@ -264,9 +253,9 @@ export class App {
     // Update the stages and the block schedule.
     this.updateStages();
     this.blockSchedule.updateBlockSchedule(this.dayId, this.enabledStageIds);
-    this.updateCurrentTimeLines();
+    this.updateForCurrentTime();
 
-    this.saveState();
+    this.saveSelectedDayAndStages();
   }
 
   private toggleStageId(stageId: string): void {
@@ -293,11 +282,11 @@ export class App {
     // Update the block schedule.
     this.blockSchedule.updateBlockSchedule(this.dayId, this.enabledStageIds);
 
-    this.saveState();
+    this.saveSelectedDayAndStages();
   }
 
   private saveScrollPosition(): void {
     this.scrollPosition = this.eventsContainer.scrollLeft;
-    this.saveState();
+    localStorage.setItem("scrollPosition", this.scrollPosition.toString());
   }
 }
