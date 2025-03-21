@@ -127,15 +127,12 @@ export class App {
   }
 
   // Saves the day and enabled stages to local storage.
-  private saveState(): void {
+  private saveSelectedDayAndStages(): void {
     localStorage.setItem("dayId", this.dayId);
     localStorage.setItem(
       "enabledStageIds",
       JSON.stringify(this.enabledStageIds),
     );
-    if (this.scrollPosition !== null) {
-      localStorage.setItem("scrollPosition", this.scrollPosition.toString());
-    }
   }
 
   // If present, loads the day and enabled stages from local storage.
@@ -258,7 +255,7 @@ export class App {
     this.blockSchedule.updateBlockSchedule(this.dayId, this.enabledStageIds);
     this.updateForCurrentTime();
 
-    this.saveState();
+    this.saveSelectedDayAndStages();
   }
 
   private toggleStageId(stageId: string): void {
@@ -285,11 +282,11 @@ export class App {
     // Update the block schedule.
     this.blockSchedule.updateBlockSchedule(this.dayId, this.enabledStageIds);
 
-    this.saveState();
+    this.saveSelectedDayAndStages();
   }
 
   private saveScrollPosition(): void {
     this.scrollPosition = this.eventsContainer.scrollLeft;
-    this.saveState();
+    localStorage.setItem("scrollPosition", this.scrollPosition.toString());
   }
 }
