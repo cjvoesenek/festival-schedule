@@ -31,6 +31,7 @@ nav {
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   cursor: pointer;
+  transition: opacity 0.5s;
 }
 
 #days > div {
@@ -107,9 +108,14 @@ nav {
 }
 
 /* Block schedule SVG styles. */
+g.stage-schedule {
+  transition: transform 0.5s;
+}
+
 rect.block {
   stroke: #fff;
   stroke-width: 0.5;
+  transition: opacity 0.5s;
 }
 
 rect.block.clickable {

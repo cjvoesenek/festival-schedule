@@ -74,6 +74,7 @@ class StageScheduleBuilder {
   buildStageSchedule(): StageSchedule {
     // Create a root SVG element for this stage's block schedule.
     const group = createSvgElement<SVGGElement>("g");
+    group.classList.add("stage-schedule");
 
     // Create groups for hour lines, blocks, the current time line and text.
     const [gBlocks, gText] = this.createBlocks();
