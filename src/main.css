@@ -126,6 +126,7 @@ foreignObject.block-text {
 
 div.text-container {
   font-size: 6px;
+  color: black;
   display: flex;
   flex-direction: column;
   justify-content: center;

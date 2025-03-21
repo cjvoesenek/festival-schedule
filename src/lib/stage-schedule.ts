@@ -58,6 +58,7 @@ class StageScheduleBuilder {
   private schedule: Schedule;
   private stageColour: string;
   private referenceTime: Date;
+  private borderRadius: number;
 
   constructor(schedule: Schedule, dayId: string, stageId: string) {
     this.dayId = dayId;
@@ -65,6 +66,7 @@ class StageScheduleBuilder {
     this.schedule = schedule;
     this.stageColour = schedule.getStage(stageId).colour;
     this.referenceTime = schedule.getReferenceTime(dayId);
+    this.borderRadius = this.getBorderRadius();
   }
 
   // Creates a block schedule from a schedule object for a specific day and
@@ -128,6 +130,8 @@ class StageScheduleBuilder {
       width: width.toString(),
       height: config.blockHeight.coords.toString(),
       fill: this.stageColour,
+      rx: this.borderRadius.toString(),
+      ry: this.borderRadius.toString(),
     });
     rect.classList.add("block");
     if (event.url) {
@@ -175,5 +179,20 @@ class StageScheduleBuilder {
     foreignObject.appendChild(textContainerDiv);
 
     return foreignObject;
+  }
+
+  private getBorderRadius(): number {
+    const dayElement = document.querySelector("#days > div");
+    // If there are no day elements, fall back to a default.
+    if (!dayElement) return 2;
+    // Obtain the border radius used for the day elements, then convert it to
+    // SVG coordinates.
+    const style = getComputedStyle(dayElement);
+    // parseFloat will just strip off the "px"...
+    const radiusPixels = parseFloat(style.borderRadius);
+
+    const blockHeight = this.schedule.getConfig().blockHeight;
+    const factor = blockHeight.coords / blockHeight.pixels;
+    return radiusPixels * factor;
   }
 }
