@@ -228,7 +228,7 @@ export class App {
   }
 
   updateForCurrentTime(): void {
-    this.updateCurrentTimeLine();
+    this.blockSchedule.updateCurrentTimeLine(this.dayId);
     // Check whether the "now" button should be shown. It should only be visible
     // when the current time is within any day of the schedule. In this case,
     // a dayId will be returned from the getDayIdForDateTime method.
@@ -244,10 +244,6 @@ export class App {
     }
   }
 
-  private updateCurrentTimeLine(): void {
-    this.blockSchedule.updateCurrentTimeLine(this.dayId);
-  }
-
   private setDayId(dayId: string): void {
     this.dayId = dayId;
 
@@ -260,7 +256,7 @@ export class App {
     // Update the stages and the block schedule.
     this.updateStages();
     this.blockSchedule.updateBlockSchedule(this.dayId, this.enabledStageIds);
-    this.updateCurrentTimeLine();
+    this.updateForCurrentTime();
 
     this.saveState();
   }
