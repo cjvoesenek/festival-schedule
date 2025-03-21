@@ -32,10 +32,6 @@ export class BlockSchedule {
   }
 
   updateBlockSchedule(dayId: string, enabledStageIds: string[]): void {
-    // Clip the block schedule to the start and end of the current selection of
-    // day and stages.
-    this.clipToCurrentRange(dayId, enabledStageIds);
-
     this.hideAllStages();
     this.mapCurrentStages(dayId, enabledStageIds, (stageSchedule, index) => {
       const stageElement = stageSchedule.element;
@@ -44,8 +40,13 @@ export class BlockSchedule {
       const yStage = index * this.schedule.getConfig().blockHeight.coords;
       stageElement.setAttribute("transform", `translate(0, ${yStage})`);
       // Unhide the enabled stages.
-      stageElement.setAttribute("display", "inline");
+      stageElement.classList.remove("inactive");
+      stageElement.classList.add("active");
     });
+
+    // Clip the block schedule to the start and end of the current selection of
+    // day and stages.
+    this.clipToCurrentRange(dayId, enabledStageIds);
   }
 
   updateCurrentTimeLine(dayId: string): void {
@@ -70,7 +71,7 @@ export class BlockSchedule {
   hideAllStages(): void {
     for (const daySchedule of this.stageSchedules.values()) {
       for (const stageSchedule of daySchedule.values()) {
-        stageSchedule.element.setAttribute("display", "none");
+        stageSchedule.element.classList.add("inactive");
       }
     }
   }
@@ -121,12 +122,25 @@ export class BlockSchedule {
     const widthPixels = (widthCoords / blockHeight.coords) * blockHeight.pixels;
     const heightPixels = numStages * blockHeight.pixels;
 
-    this.svg.setAttribute(
-      "viewBox",
-      `${startCoord} 0 ${widthCoords} ${heightCoords}`,
-    );
-    this.svg.setAttribute("width", widthPixels.toString());
-    this.svg.setAttribute("height", heightPixels.toString());
+    const updateSize = (): void => {
+      this.svg.setAttribute(
+        "viewBox",
+        `${startCoord} 0 ${widthCoords} ${heightCoords}`,
+      );
+      this.svg.setAttribute("width", widthPixels.toString());
+      this.svg.setAttribute("height", heightPixels.toString());
+    };
+
+    // If we are shrinking activate after 500ms to wait for our transition
+    // animation to finish, if we are growing, make room for the transition
+    // immediately.
+    const currentHeight = this.svg.height.baseVal.value;
+    const isGrowing = heightPixels > currentHeight;
+    if (isGrowing) {
+      updateSize();
+    } else {
+      window.setTimeout(updateSize, 500);
+    }
   }
 
   private mapCurrentStages<T>(
