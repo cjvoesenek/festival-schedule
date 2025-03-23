@@ -109,9 +109,7 @@ nav {
 
 /* Block schedule SVG styles. */
 g.stage-schedule {
-  transition:
-    transform 0.5s,
-    opacity 0.5s;
+  transition: opacity 0.5s;
 }
 
 g.stage-schedule.active {
@@ -120,6 +118,10 @@ g.stage-schedule.active {
 
 g.stage-schedule.inactive {
   opacity: 0;
+}
+
+g.stage-schedule.active.was-active {
+  transition: transform 0.5s;
 }
 
 rect.block {
