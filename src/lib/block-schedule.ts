@@ -71,7 +71,16 @@ export class BlockSchedule {
   hideAllStages(): void {
     for (const daySchedule of this.stageSchedules.values()) {
       for (const stageSchedule of daySchedule.values()) {
-        stageSchedule.element.classList.add("inactive");
+        const element = stageSchedule.element;
+        const isActive = element.classList.contains("active");
+        if (isActive) {
+          element.classList.add("was-active");
+        } else {
+          console.log("removing was-active");
+          element.classList.remove("was-active");
+        }
+        element.classList.remove("active");
+        element.classList.add("inactive");
       }
     }
   }
