@@ -1,0 +1,856 @@
+{
+  "config": {
+    "blockHeight": {
+      "coords": 30,
+      "pixels": 100
+    }
+  },
+  "stages": [
+    {
+      "id": "hotot",
+      "name": "Hotot",
+      "colour": "#1b9e77"
+    },
+    {
+      "id": "teddy-widder",
+      "name": "Teddy Widder",
+      "colour": "#d95f02"
+    },
+    {
+      "id": "fuzzy-lop",
+      "name": "Fuzzy Lop",
+      "colour": "#7570b3"
+    },
+    {
+      "id": "rex",
+      "name": "REX",
+      "colour": "#e7298a"
+    },
+    {
+      "id": "bizarre",
+      "name": "The Bizarre",
+      "colour": "#66a61e"
+    }
+  ],
+  "schedule": [
+    {
+      "id": "friday",
+      "name": "Friday",
+      "date": "2025-07-04",
+      "events": {
+        "hotot": [
+          {
+            "start": "13:40",
+            "end": "14:30",
+            "name": "Clean Pete's Rabbit Revue",
+            "url": "https://downtherabbithole.nl/programma/clean-petes-rabbit-revue"
+          },
+          {
+            "start": "15:30",
+            "end": "16:30",
+            "name": "S10",
+            "url": "https://downtherabbithole.nl/programma/s10"
+          },
+          {
+            "start": "17:30",
+            "end": "18:30",
+            "name": "Ezra Collective",
+            "url": "https://downtherabbithole.nl/programma/ezra-collective"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Amyl and the Sniffers",
+            "url": "https://downtherabbithole.nl/programma/amyl-and-the-sniffers"
+          },
+          {
+            "start": "21:30",
+            "end": "22:30",
+            "name": "De Jeugd: 20",
+            "url": "https://downtherabbithole.nl/programma/de-jeugd-20"
+          },
+          {
+            "start": "23:10",
+            "end": "00:55",
+            "name": "Massive Attack",
+            "url": "https://downtherabbithole.nl/programma/massive-attack"
+          }
+        ],
+        "teddy-widder": [
+          {
+            "start": "14:30",
+            "end": "15:30",
+            "name": "J. Bernardt",
+            "url": "https://downtherabbithole.nl/programma/j-bernardt"
+          },
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "The Lathums",
+            "url": "https://downtherabbithole.nl/programma/the-lathums"
+          },
+          {
+            "start": "18:30",
+            "end": "19:30",
+            "name": "JPEGMAFIA",
+            "url": "https://downtherabbithole.nl/programma/jpegmafia"
+          },
+          {
+            "start": "20:30",
+            "end": "21:30",
+            "name": "Patti Smith",
+            "url": "https://downtherabbithole.nl/programma/patti-smith"
+          },
+          {
+            "start": "22:15",
+            "end": "23:30",
+            "name": "Maribou State",
+            "url": "https://downtherabbithole.nl/programma/maribou-state"
+          },
+          {
+            "start": "00:15",
+            "end": "01:30",
+            "name": "Tsepo",
+            "url": "https://downtherabbithole.nl/programma/tsepo"
+          },
+          {
+            "start": "01:30",
+            "end": "03:00",
+            "name": "Jyoty",
+            "url": "https://downtherabbithole.nl/programma/jyoty"
+          },
+          {
+            "start": "03:00",
+            "end": "04:30",
+            "name": "Interplanetary Criminal",
+            "url": "https://downtherabbithole.nl/programma/interplanetary-criminal"
+          }
+        ],
+        "fuzzy-lop": [
+          {
+            "start": "14:30",
+            "end": "15:30",
+            "name": "Rog\u00ea",
+            "url": "https://downtherabbithole.nl/programma/roge"
+          },
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "Chloe Qisha",
+            "url": "https://downtherabbithole.nl/programma/chloe-qisha"
+          },
+          {
+            "start": "18:30",
+            "end": "19:30",
+            "name": "MICH",
+            "url": "https://downtherabbithole.nl/programma/mich"
+          },
+          {
+            "start": "20:30",
+            "end": "21:30",
+            "name": "Peter Cat Recording Co.",
+            "url": "https://downtherabbithole.nl/programma/peter-cat-recording-co"
+          },
+          {
+            "start": "22:30",
+            "end": "23:20",
+            "name": "Gurriers",
+            "url": "https://downtherabbithole.nl/programma/gurriers"
+          },
+          {
+            "start": "00:00",
+            "end": "00:55",
+            "name": "SMIB",
+            "url": "https://downtherabbithole.nl/programma/smib"
+          },
+          {
+            "start": "01:15",
+            "end": "04:00",
+            "name": "Rabbit Radio: Menno de Meester & DJ Prima",
+            "url": "https://downtherabbithole.nl/programma/rabbit-radio-menno-de-meester-dj-prima"
+          }
+        ],
+        "rex": [
+          {
+            "start": "12:00",
+            "end": "14:00",
+            "name": "Kevin Lo",
+            "url": "https://downtherabbithole.nl/programma/kevin-lo"
+          },
+          {
+            "start": "14:00",
+            "end": "16:00",
+            "name": "Davy Brandts",
+            "url": "https://downtherabbithole.nl/programma/davy-brandts"
+          },
+          {
+            "start": "16:00",
+            "end": "18:00",
+            "name": "JBN Soundsystem",
+            "url": "https://downtherabbithole.nl/programma/jbn-soundsystem"
+          },
+          {
+            "start": "18:00",
+            "end": "20:00",
+            "name": "Ajuma",
+            "url": "https://downtherabbithole.nl/programma/ajuma"
+          },
+          {
+            "start": "20:00",
+            "end": "21:30",
+            "name": "GOME (hybrid)",
+            "url": "https://downtherabbithole.nl/programma/gome-hybrid"
+          },
+          {
+            "start": "21:30",
+            "end": "23:30",
+            "name": "Retromigration",
+            "url": "https://downtherabbithole.nl/programma/retromigration"
+          },
+          {
+            "start": "23:30",
+            "end": "02:30",
+            "name": "Suze Ij\u00f3 b2b Dee Diggs",
+            "url": "https://downtherabbithole.nl/programma/suze-ijo-b2b-dee-diggs"
+          },
+          {
+            "start": "02:30",
+            "end": "04:30",
+            "name": "Kamma",
+            "url": "https://downtherabbithole.nl/programma/kamma"
+          },
+          {
+            "start": "11:00",
+            "end": "12:00",
+            "name": "Morning Rave",
+            "url": "https://downtherabbithole.nl/programma/morning-rave"
+          }
+        ],
+        "bizarre": [
+          {
+            "start": "12:00",
+            "end": "13:00",
+            "name": "Dabke Dansworkshop",
+            "url": "https://downtherabbithole.nl/programma/dabke-dansworkshop"
+          },
+          {
+            "start": "13:00",
+            "end": "14:00",
+            "name": "DJ NIEMANDER (Omar & Kais)",
+            "url": "https://downtherabbithole.nl/programma/dj-niemander-omar-kais"
+          },
+          {
+            "start": "14:00",
+            "end": "14:45",
+            "name": "De Niemanders",
+            "url": "https://downtherabbithole.nl/programma/de-niemanders"
+          },
+          {
+            "start": "14:45",
+            "end": "16:15",
+            "name": "YENTZYZ",
+            "url": "https://downtherabbithole.nl/programma/yentzyz"
+          },
+          {
+            "start": "16:15",
+            "end": "17:00",
+            "name": "Kingdom Sound x Higherlife Collective",
+            "url": "https://downtherabbithole.nl/programma/kingdom-sound-x-higherlife-collective"
+          },
+          {
+            "start": "17:00",
+            "end": "18:30",
+            "name": "Deemz",
+            "url": "https://downtherabbithole.nl/programma/deemz"
+          },
+          {
+            "start": "18:30",
+            "end": "20:00",
+            "name": "Ays",
+            "url": "https://downtherabbithole.nl/programma/ays"
+          },
+          {
+            "start": "20:00",
+            "end": "20:45",
+            "name": "Guedra Guedra (live)",
+            "url": "https://downtherabbithole.nl/programma/guedra-guedra-live"
+          },
+          {
+            "start": "20:45",
+            "end": "22:15",
+            "name": "Yusu Selectors",
+            "url": "https://downtherabbithole.nl/programma/yusu-selectors"
+          },
+          {
+            "start": "22:15",
+            "end": "23:30",
+            "name": "Zack Fox",
+            "url": "https://downtherabbithole.nl/programma/zack-fox"
+          },
+          {
+            "start": "23:30",
+            "end": "01:00",
+            "name": "Styn",
+            "url": "https://downtherabbithole.nl/programma/styn"
+          },
+          {
+            "start": "01:00",
+            "end": "02:30",
+            "name": "Disco Arabesquo",
+            "url": "https://downtherabbithole.nl/programma/disco-arabesquo"
+          },
+          {
+            "start": "02:30",
+            "end": "04:00",
+            "name": "Noise Diva",
+            "url": "https://downtherabbithole.nl/programma/noise-diva"
+          }
+        ]
+      }
+    },
+    {
+      "id": "saturday",
+      "name": "Saturday",
+      "date": "2025-07-05",
+      "events": {
+        "hotot": [
+          {
+            "start": "13:30",
+            "end": "14:30",
+            "name": "Kokoroko",
+            "url": "https://downtherabbithole.nl/programma/kokoroko"
+          },
+          {
+            "start": "15:30",
+            "end": "16:30",
+            "name": "Royel Otis",
+            "url": "https://downtherabbithole.nl/programma/royel-otis"
+          },
+          {
+            "start": "17:30",
+            "end": "18:30",
+            "name": "Franc Moody",
+            "url": "https://downtherabbithole.nl/programma/franc-moody"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Wet Leg",
+            "url": "https://downtherabbithole.nl/programma/wet-leg"
+          },
+          {
+            "start": "21:30",
+            "end": "22:30",
+            "name": "Iggy Pop",
+            "url": "https://downtherabbithole.nl/programma/iggy-pop"
+          },
+          {
+            "start": "23:25",
+            "end": "00:55",
+            "name": "Underworld",
+            "url": "https://downtherabbithole.nl/programma/underworld"
+          }
+        ],
+        "teddy-widder": [
+          {
+            "start": "12:30",
+            "end": "13:30",
+            "name": "QUIQUE",
+            "url": "https://downtherabbithole.nl/programma/quique"
+          },
+          {
+            "start": "14:30",
+            "end": "15:30",
+            "name": "Wunderhorse",
+            "url": "https://downtherabbithole.nl/programma/wunderhorse"
+          },
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "Pa Salieu",
+            "url": "https://downtherabbithole.nl/programma/pa-salieu"
+          },
+          {
+            "start": "18:30",
+            "end": "19:30",
+            "name": "Saint Levant",
+            "url": "https://downtherabbithole.nl/programma/saint-levant"
+          },
+          {
+            "start": "20:30",
+            "end": "21:30",
+            "name": "Zaho de Sagazan",
+            "url": "https://downtherabbithole.nl/programma/zaho-de-sagazan"
+          },
+          {
+            "start": "22:30",
+            "end": "23:30",
+            "name": "FKA twigs",
+            "url": "https://downtherabbithole.nl/programma/fka-twigs"
+          },
+          {
+            "start": "00:15",
+            "end": "01:30",
+            "name": "Bibi Seck",
+            "url": "https://downtherabbithole.nl/programma/bibi-seck"
+          },
+          {
+            "start": "01:30",
+            "end": "03:00",
+            "name": "salute",
+            "url": "https://downtherabbithole.nl/programma/salute"
+          },
+          {
+            "start": "03:00",
+            "end": "04:30",
+            "name": "Young Marco",
+            "url": "https://downtherabbithole.nl/programma/young-marco"
+          }
+        ],
+        "fuzzy-lop": [
+          {
+            "start": "12:30",
+            "end": "13:30",
+            "name": "Benefits",
+            "url": "https://downtherabbithole.nl/programma/benefits"
+          },
+          {
+            "start": "14:30",
+            "end": "15:30",
+            "name": "Bassolino",
+            "url": "https://downtherabbithole.nl/programma/bassolino"
+          },
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "Nieve Ella",
+            "url": "https://downtherabbithole.nl/programma/nieve-ella"
+          },
+          {
+            "start": "18:30",
+            "end": "19:30",
+            "name": "Model/Actriz",
+            "url": "https://downtherabbithole.nl/programma/modelactriz"
+          },
+          {
+            "start": "20:30",
+            "end": "21:30",
+            "name": "Joey Valence & Brae",
+            "url": "https://downtherabbithole.nl/programma/joey-valence-brae"
+          },
+          {
+            "start": "22:30",
+            "end": "23:30",
+            "name": "Fat Dog",
+            "url": "https://downtherabbithole.nl/programma/fat-dog"
+          },
+          {
+            "start": "01:30",
+            "end": "04:00",
+            "name": "Rabbit Radio: Vera Siemons & Liza v/d Brink",
+            "url": "https://downtherabbithole.nl/programma/rabbit-radio-vera-siemons-liza-vd-brink"
+          }
+        ],
+        "rex": [
+          {
+            "start": "12:00",
+            "end": "14:30",
+            "name": "OG Karin",
+            "url": "https://downtherabbithole.nl/programma/og-karin"
+          },
+          {
+            "start": "14:30",
+            "end": "15:30",
+            "name": "SUBFICTION (live)",
+            "url": "https://downtherabbithole.nl/programma/subfiction-live"
+          },
+          {
+            "start": "15:30",
+            "end": "18:30",
+            "name": "I-F b2b Esther Dune",
+            "url": "https://downtherabbithole.nl/programma/i-f-b2b-esther-dune"
+          },
+          {
+            "start": "18:30",
+            "end": "19:30",
+            "name": "LUXE (live)",
+            "url": "https://downtherabbithole.nl/programma/luxe-live"
+          },
+          {
+            "start": "19:30",
+            "end": "21:30",
+            "name": "Kimmah",
+            "url": "https://downtherabbithole.nl/programma/kimmah"
+          },
+          {
+            "start": "21:30",
+            "end": "22:30",
+            "name": "Marie Davidson (live)",
+            "url": "https://downtherabbithole.nl/programma/marie-davidson-live"
+          },
+          {
+            "start": "22:30",
+            "end": "00:30",
+            "name": "Ehua",
+            "url": "https://downtherabbithole.nl/programma/ehua"
+          },
+          {
+            "start": "00:30",
+            "end": "02:30",
+            "name": "Objekt",
+            "url": "https://downtherabbithole.nl/programma/objekt"
+          },
+          {
+            "start": "02:30",
+            "end": "04:30",
+            "name": "Nala Brown",
+            "url": "https://downtherabbithole.nl/programma/nala-brown"
+          },
+          {
+            "start": "11:00",
+            "end": "12:00",
+            "name": "Morning Rave",
+            "url": "https://downtherabbithole.nl/programma/morning-rave"
+          }
+        ],
+        "bizarre": [
+          {
+            "start": "12:00",
+            "end": "13:00",
+            "name": "Dabke Dansworkshop",
+            "url": "https://downtherabbithole.nl/programma/dabke-dansworkshop"
+          },
+          {
+            "start": "13:00",
+            "end": "14:00",
+            "name": "DJ NIEMANDER (Omar & Kais)",
+            "url": "https://downtherabbithole.nl/programma/dj-niemander-omar-kais"
+          },
+          {
+            "start": "14:00",
+            "end": "14:45",
+            "name": "De Niemanders",
+            "url": "https://downtherabbithole.nl/programma/de-niemanders"
+          },
+          {
+            "start": "14:45",
+            "end": "16:15",
+            "name": "Charwinoa",
+            "url": "https://downtherabbithole.nl/programma/charwinoa"
+          },
+          {
+            "start": "16:15",
+            "end": "17:00",
+            "name": "Ginton (live)",
+            "url": "https://downtherabbithole.nl/programma/ginton-live"
+          },
+          {
+            "start": "17:00",
+            "end": "18:30",
+            "name": "Maey",
+            "url": "https://downtherabbithole.nl/programma/maey"
+          },
+          {
+            "start": "18:30",
+            "end": "19:45",
+            "name": "Eileen",
+            "url": "https://downtherabbithole.nl/programma/eileen"
+          },
+          {
+            "start": "19:45",
+            "end": "20:45",
+            "name": "DJ Beukeboom (live)",
+            "url": "https://downtherabbithole.nl/programma/dj-beukeboom-live"
+          },
+          {
+            "start": "20:45",
+            "end": "22:15",
+            "name": "Rozaly",
+            "url": "https://downtherabbithole.nl/programma/rozaly"
+          },
+          {
+            "start": "22:15",
+            "end": "23:45",
+            "name": "Blck Mamba",
+            "url": "https://downtherabbithole.nl/programma/blck-mamba"
+          },
+          {
+            "start": "23:45",
+            "end": "01:15",
+            "name": "Djamil",
+            "url": "https://downtherabbithole.nl/programma/djamil"
+          },
+          {
+            "start": "01:15",
+            "end": "02:45",
+            "name": "Rosa Pistola",
+            "url": "https://downtherabbithole.nl/programma/rosa-pistola"
+          },
+          {
+            "start": "02:45",
+            "end": "04:00",
+            "name": "CHAL\u00c9",
+            "url": "https://downtherabbithole.nl/programma/chale"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sunday",
+      "name": "Sunday",
+      "date": "2025-07-06",
+      "events": {
+        "hotot": [
+          {
+            "start": "13:00",
+            "end": "14:00",
+            "name": "Durand Jones & The Indications",
+            "url": "https://downtherabbithole.nl/programma/durand-jones-the-indications"
+          },
+          {
+            "start": "15:00",
+            "end": "16:00",
+            "name": "Hermanos Guti\u00e9rrez",
+            "url": "https://downtherabbithole.nl/programma/hermanos-gutierrez"
+          },
+          {
+            "start": "17:00",
+            "end": "18:00",
+            "name": "Bloc Party ",
+            "url": "https://downtherabbithole.nl/programma/bloc-party"
+          },
+          {
+            "start": "19:00",
+            "end": "20:00",
+            "name": "Tems",
+            "url": "https://downtherabbithole.nl/programma/tems"
+          },
+          {
+            "start": "21:15",
+            "end": "22:45",
+            "name": "Sam Fender",
+            "url": "https://downtherabbithole.nl/programma/sam-fender"
+          }
+        ],
+        "teddy-widder": [
+          {
+            "start": "12:00",
+            "end": "13:00",
+            "name": "Alogte Oho & His Sounds of Joy",
+            "url": "https://downtherabbithole.nl/programma/alogte-oho-his-sounds-of-joy"
+          },
+          {
+            "start": "14:00",
+            "end": "15:00",
+            "name": "Hang Youth",
+            "url": "https://downtherabbithole.nl/programma/hang-youth"
+          },
+          {
+            "start": "16:00",
+            "end": "17:00",
+            "name": "Japanese Breakfast",
+            "url": "https://downtherabbithole.nl/programma/japanese-breakfast"
+          },
+          {
+            "start": "18:00",
+            "end": "19:00",
+            "name": "Viagra Boys",
+            "url": "https://downtherabbithole.nl/programma/viagra-boys"
+          },
+          {
+            "start": "20:00",
+            "end": "21:00",
+            "name": "Beth Gibbons",
+            "url": "https://downtherabbithole.nl/programma/beth-gibbons"
+          },
+          {
+            "start": "22:00",
+            "end": "23:00",
+            "name": "Floating Points (live)",
+            "url": "https://downtherabbithole.nl/programma/floating-points-live"
+          },
+          {
+            "start": "23:00",
+            "end": "03:30",
+            "name": "Rabbit Radio: Arnold Scheepmaker",
+            "url": "https://downtherabbithole.nl/programma/rabbit-radio-arnold-scheepmaker"
+          }
+        ],
+        "fuzzy-lop": [
+          {
+            "start": "12:00",
+            "end": "13:00",
+            "name": "Ichiko Aoba",
+            "url": "https://downtherabbithole.nl/programma/ichiko-aoba"
+          },
+          {
+            "start": "14:00",
+            "end": "15:00",
+            "name": "Judeline",
+            "url": "https://downtherabbithole.nl/programma/judeline"
+          },
+          {
+            "start": "16:00",
+            "end": "17:00",
+            "name": "Geordie Greep",
+            "url": "https://downtherabbithole.nl/programma/geordie-greep"
+          },
+          {
+            "start": "18:00",
+            "end": "19:00",
+            "name": "Yseult",
+            "url": "https://downtherabbithole.nl/programma/yseult"
+          },
+          {
+            "start": "20:15",
+            "end": "21:15",
+            "name": "Greentea Peng",
+            "url": "https://downtherabbithole.nl/programma/greentea-peng"
+          },
+          {
+            "start": "22:30",
+            "end": "01:00",
+            "name": "Suze Ij\u00f3",
+            "url": "https://downtherabbithole.nl/programma/suze-ijo"
+          },
+          {
+            "start": "01:00",
+            "end": "04:00",
+            "name": "John Talabot",
+            "url": "https://downtherabbithole.nl/programma/john-talabot"
+          }
+        ],
+        "rex": [
+          {
+            "start": "12:00",
+            "end": "14:00",
+            "name": "PAAK Listening Club",
+            "url": "https://downtherabbithole.nl/programma/paak-listening-club"
+          },
+          {
+            "start": "14:00",
+            "end": "16:30",
+            "name": "Nathan Kofi",
+            "url": "https://downtherabbithole.nl/programma/nathan-kofi"
+          },
+          {
+            "start": "16:30",
+            "end": "17:30",
+            "name": "Melatonin Man (live)",
+            "url": "https://downtherabbithole.nl/programma/melatonin-man-live"
+          },
+          {
+            "start": "17:30",
+            "end": "19:30",
+            "name": "Lenxi",
+            "url": "https://downtherabbithole.nl/programma/lenxi"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Priori (live)",
+            "url": "https://downtherabbithole.nl/programma/priori-live"
+          },
+          {
+            "start": "20:30",
+            "end": "22:30",
+            "name": "Naone",
+            "url": "https://downtherabbithole.nl/programma/naone"
+          },
+          {
+            "start": "22:30",
+            "end": "00:30",
+            "name": "Alex Kassian",
+            "url": "https://downtherabbithole.nl/programma/alex-kassian"
+          },
+          {
+            "start": "00:30",
+            "end": "02:30",
+            "name": "THC",
+            "url": "https://downtherabbithole.nl/programma/thc"
+          },
+          {
+            "start": "02:30",
+            "end": "04:30",
+            "name": "Merve",
+            "url": "https://downtherabbithole.nl/programma/merve"
+          },
+          {
+            "start": "11:00",
+            "end": "12:00",
+            "name": "Morning Rave",
+            "url": "https://downtherabbithole.nl/programma/morning-rave"
+          }
+        ],
+        "bizarre": [
+          {
+            "start": "12:00",
+            "end": "13:00",
+            "name": "Dabke Dansworkshop",
+            "url": "https://downtherabbithole.nl/programma/dabke-dansworkshop"
+          },
+          {
+            "start": "13:00",
+            "end": "14:00",
+            "name": "DJ NIEMANDER (Omar & Kais)",
+            "url": "https://downtherabbithole.nl/programma/dj-niemander-omar-kais"
+          },
+          {
+            "start": "14:00",
+            "end": "14:45",
+            "name": "De Niemanders",
+            "url": "https://downtherabbithole.nl/programma/de-niemanders"
+          },
+          {
+            "start": "14:45",
+            "end": "17:00",
+            "name": "Marla Kether",
+            "url": "https://downtherabbithole.nl/programma/marla-kether"
+          },
+          {
+            "start": "17:00",
+            "end": "18:30",
+            "name": "Retro Cassetta",
+            "url": "https://downtherabbithole.nl/programma/retro-cassetta"
+          },
+          {
+            "start": "18:30",
+            "end": "20:00",
+            "name": "T.NO",
+            "url": "https://downtherabbithole.nl/programma/tno"
+          },
+          {
+            "start": "20:00",
+            "end": "22:00",
+            "name": "Mina & Bryte (live)",
+            "url": "https://downtherabbithole.nl/programma/mina-bryte-live"
+          },
+          {
+            "start": "22:00",
+            "end": "23:30",
+            "name": "Kurashi",
+            "url": "https://downtherabbithole.nl/programma/kurashi"
+          },
+          {
+            "start": "23:30",
+            "end": "01:00",
+            "name": "Kizzi",
+            "url": "https://downtherabbithole.nl/programma/kizzi"
+          },
+          {
+            "start": "01:00",
+            "end": "02:30",
+            "name": "Kampire",
+            "url": "https://downtherabbithole.nl/programma/kampire"
+          },
+          {
+            "start": "02:30",
+            "end": "04:00",
+            "name": "ZOBAYDA",
+            "url": "https://downtherabbithole.nl/programma/zobayda"
+          }
+        ]
+      }
+    }
+  ]
+}
