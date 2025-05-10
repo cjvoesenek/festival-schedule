@@ -76,7 +76,6 @@ export class BlockSchedule {
         if (isActive) {
           element.classList.add("was-active");
         } else {
-          console.log("removing was-active");
           element.classList.remove("was-active");
         }
         element.classList.remove("active");
