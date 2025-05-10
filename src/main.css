@@ -118,6 +118,7 @@ g.stage-schedule.active {
 
 g.stage-schedule.inactive {
   opacity: 0;
+  pointer-events: none;
 }
 
 g.stage-schedule.active.was-active {
