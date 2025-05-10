@@ -118,11 +118,12 @@ def gather_events(
     stage_name_to_id = {stage.name: stage.id for stage in stages}
     day_dutch_name_to_id = {day.dutch_name: day.id for day in days}
 
+    logger.info(f'Gathering artist page links from URL "{main_url}".')
     response = requests.get(main_url)
 
     soup = BeautifulSoup(response.text, "html.parser")
     artist_links = soup.find_all("a", class_="group")
-    num_events = len(artist_links)
+    num_artists = len(artist_links)
 
     events: list[ParsedEvent] = []
     for i, link in enumerate(artist_links):
@@ -133,13 +134,21 @@ def gather_events(
         if not isinstance(name, str) or not isinstance(url, str):
             continue
 
-        logger.info(f"Gathering event {i + 1} of {num_events}: {name}...")
+        print(f"Processing artist page {i + 1} of {num_artists}: {name}...", end="")
+        logger.info(
+            f'Processing page {i + 1} of {num_artists} for artist "{name}" at URL "{url}".'
+        )
         try:
-            events += gather_events_from_artist_page(
+            artist_events = gather_events_from_artist_page(
                 name, url, stage_name_to_id, day_dutch_name_to_id
             )
-            logger.info("Success")
+            events += artist_events
+            print("success")
+            logger.info(
+                f"Successfully processed page; found {len(artist_events)} event{'s' if len(artist_events) > 1 else ''}."
+            )
         except Exception:
+            print("failed")
             logger.exception("Failed")
     return events
 
@@ -193,10 +202,6 @@ def main() -> None:
 
     logger.setLevel(logging.DEBUG)
 
-    stream_handler = logging.StreamHandler(sys.stdout)
-    stream_handler.setLevel(logging.INFO)
-    logger.addHandler(stream_handler)
-
     file_handler = logging.FileHandler(log_path, mode="w", encoding="utf-8")
     file_handler.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
@@ -217,8 +222,11 @@ def main() -> None:
     ]
 
     parsed_events = gather_events(main_url, days, stages)
+
+    logger.info("Converting events to schedule.")
     schedule = convert_events_to_schedule(parsed_events, config, days, stages)
 
+    logger.info(f'Writing schedule to "{output_path}".')
     with open(output_path, "w", encoding="utf-8") as file:
         json.dump(dataclasses.asdict(schedule), file, indent=2)
 
