@@ -3,7 +3,6 @@ import json
 import logging
 import pathlib
 import re
-import sys
 
 from bs4 import BeautifulSoup, Tag
 import requests
