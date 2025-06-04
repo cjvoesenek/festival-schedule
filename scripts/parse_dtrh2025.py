@@ -213,6 +213,9 @@ def main() -> None:
         Stage("fuzzy-lop", "Fuzzy Lop", "#7570b3"),
         Stage("rex", "REX", "#e7298a"),
         Stage("bizarre", "The Bizarre", "#66a61e"),
+        Stage("bossa-nova", "Bossa Nova", "#e6ab02"),
+        Stage("radiate-v", "RADIATE V", "#a6761d"),
+        Stage("croque-madame", "the CROQUE Madame", "#666666"),
     ]
     days = [
         Day("friday", "vrijdag", "Friday", "2025-07-04"),

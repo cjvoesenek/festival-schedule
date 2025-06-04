@@ -30,6 +30,21 @@
       "id": "bizarre",
       "name": "The Bizarre",
       "colour": "#66a61e"
+    },
+    {
+      "id": "bossa-nova",
+      "name": "Bossa Nova",
+      "colour": "#e6ab02"
+    },
+    {
+      "id": "radiate-v",
+      "name": "RADIATE V",
+      "colour": "#a6761d"
+    },
+    {
+      "id": "croque-madame",
+      "name": "the CROQUE Madame",
+      "colour": "#666666"
     }
   ],
   "schedule": [
@@ -304,6 +319,102 @@
             "end": "04:00",
             "name": "Noise Diva",
             "url": "https://downtherabbithole.nl/programma/noise-diva"
+          }
+        ],
+        "bossa-nova": [
+          {
+            "start": "13:15",
+            "end": "14:00",
+            "name": "Min Taka ",
+            "url": "https://downtherabbithole.nl/programma/min-taka"
+          },
+          {
+            "start": "15:30",
+            "end": "16:15",
+            "name": "Mychelle ",
+            "url": "https://downtherabbithole.nl/programma/mychelle"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Thijs Boontjes ",
+            "url": "https://downtherabbithole.nl/programma/thijs-boontjes"
+          },
+          {
+            "start": "22:00",
+            "end": "23:00",
+            "name": " S10: Groeipijn",
+            "url": "https://downtherabbithole.nl/programma/s10-groeipijn"
+          },
+          {
+            "start": "23:00",
+            "end": "03:00",
+            "name": "Orkater & invites: A Divine Comedy ",
+            "url": "https://downtherabbithole.nl/programma/orkater-invites-a-divine-comedy"
+          },
+          {
+            "start": "10:30",
+            "end": "11:15",
+            "name": "Groot Omroepkoor",
+            "url": "https://downtherabbithole.nl/programma/groot-omroepkoor"
+          }
+        ],
+        "radiate-v": [
+          {
+            "start": "15:00",
+            "end": "17:00",
+            "name": "Torus",
+            "url": "https://downtherabbithole.nl/programma/torus"
+          },
+          {
+            "start": "17:00",
+            "end": "18:00",
+            "name": "Faberyayo DJ set",
+            "url": "https://downtherabbithole.nl/programma/faberyayo-dj-set"
+          },
+          {
+            "start": "19:00",
+            "end": "20:00",
+            "name": "Sondi",
+            "url": "https://downtherabbithole.nl/programma/sondi"
+          },
+          {
+            "start": "21:00",
+            "end": "23:00",
+            "name": "emma dj",
+            "url": "https://downtherabbithole.nl/programma/emma-dj"
+          }
+        ],
+        "croque-madame": [
+          {
+            "start": "12:00",
+            "end": "13:30",
+            "name": "The House of Hopelezz",
+            "url": "https://downtherabbithole.nl/programma/the-house-of-hopelezz"
+          },
+          {
+            "start": "22:30",
+            "end": "00:15",
+            "name": "Clara!",
+            "url": "https://downtherabbithole.nl/programma/clara"
+          },
+          {
+            "start": "00:15",
+            "end": "01:00",
+            "name": "LSDXOXO (live)",
+            "url": "https://downtherabbithole.nl/programma/lsdxoxo-live"
+          },
+          {
+            "start": "01:00",
+            "end": "02:30",
+            "name": "YoungWoman",
+            "url": "https://downtherabbithole.nl/programma/youngwoman"
+          },
+          {
+            "start": "02:30",
+            "end": "04:00",
+            "name": "Glabra",
+            "url": "https://downtherabbithole.nl/programma/glabra"
           }
         ]
       }
@@ -592,6 +703,126 @@
             "name": "CHAL\u00c9",
             "url": "https://downtherabbithole.nl/programma/chale"
           }
+        ],
+        "bossa-nova": [
+          {
+            "start": "13:45",
+            "end": "14:30",
+            "name": "Dan Whitlam",
+            "url": "https://downtherabbithole.nl/programma/dan-whitlam"
+          },
+          {
+            "start": "15:30",
+            "end": "16:15",
+            "name": "I Am Roze",
+            "url": "https://downtherabbithole.nl/programma/i-am-roze"
+          },
+          {
+            "start": "17:30",
+            "end": "18:15",
+            "name": "GLINTSAL",
+            "url": "https://downtherabbithole.nl/programma/glintsal"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Roos Rebergen & SunSunSun Orchestra ",
+            "url": "https://downtherabbithole.nl/programma/roos-rebergen-sunsunsun-orchestra"
+          },
+          {
+            "start": "22:00",
+            "end": "23:00",
+            "name": "\u2018Ntianu Stuger: A night with QUEEN ANGELITO",
+            "url": "https://downtherabbithole.nl/programma/ntianu-stuger-a-night-with-queen-angelito"
+          },
+          {
+            "start": "23:00",
+            "end": "03:00",
+            "name": "Orkater & invites: A Divine Comedy ",
+            "url": "https://downtherabbithole.nl/programma/orkater-invites-a-divine-comedy"
+          },
+          {
+            "start": "10:30",
+            "end": "11:00",
+            "name": "Diamanda La Berge Dramm",
+            "url": "https://downtherabbithole.nl/programma/diamanda-la-berge-dramm"
+          },
+          {
+            "start": "11:45",
+            "end": "12:30",
+            "name": "Animato Kwartet",
+            "url": "https://downtherabbithole.nl/programma/animato-kwartet"
+          }
+        ],
+        "radiate-v": [
+          {
+            "start": "14:00",
+            "end": "16:00",
+            "name": "Wake & Bake w/ NWAQ",
+            "url": "https://downtherabbithole.nl/programma/wake-bake-w-nwaq"
+          },
+          {
+            "start": "16:00",
+            "end": "17:00",
+            "name": "\u00d6tza",
+            "url": "https://downtherabbithole.nl/programma/otza"
+          },
+          {
+            "start": "17:00",
+            "end": "18:00",
+            "name": "Alec Mateo",
+            "url": "https://downtherabbithole.nl/programma/alec-mateo"
+          },
+          {
+            "start": "18:00",
+            "end": "19:00",
+            "name": "Samira",
+            "url": "https://downtherabbithole.nl/programma/samira"
+          },
+          {
+            "start": "19:00",
+            "end": "20:00",
+            "name": "Samira b2b Orpheu TW",
+            "url": "https://downtherabbithole.nl/programma/samira-b2b-orpheu-tw"
+          },
+          {
+            "start": "20:00",
+            "end": "21:00",
+            "name": "Orpheu The Wizard",
+            "url": "https://downtherabbithole.nl/programma/orpheu-the-wizard"
+          },
+          {
+            "start": "21:00",
+            "end": "23:00",
+            "name": "Loradeniz ",
+            "url": "https://downtherabbithole.nl/programma/loradeniz"
+          }
+        ],
+        "croque-madame": [
+          {
+            "start": "12:30",
+            "end": "13:30",
+            "name": "R3LN4CHT",
+            "url": "https://downtherabbithole.nl/programma/r3ln4cht"
+          },
+          {
+            "start": "22:30",
+            "end": "00:00",
+            "name": "Vuur",
+            "url": "https://downtherabbithole.nl/programma/vuur"
+          },
+          {
+            "start": "00:00",
+            "end": "02:00",
+            "name": "MALLAURY",
+            "url": "https://downtherabbithole.nl/programma/mallaury"
+          },
+          {
+            "start": "02:00",
+            "end": "04:00",
+            "name": "Slimfit",
+            "url": "https://downtherabbithole.nl/programma/slimfit"
+          }
         ]
       }
     },
@@ -848,6 +1079,120 @@
             "end": "04:00",
             "name": "ZOBAYDA",
             "url": "https://downtherabbithole.nl/programma/zobayda"
+          }
+        ],
+        "bossa-nova": [
+          {
+            "start": "13:45",
+            "end": "14:30",
+            "name": "Stevie Bill",
+            "url": "https://downtherabbithole.nl/programma/stevie-bill"
+          },
+          {
+            "start": "15:00",
+            "end": "15:45",
+            "name": "Sami Galbi",
+            "url": "https://downtherabbithole.nl/programma/sami-galbi"
+          },
+          {
+            "start": "17:00",
+            "end": "17:45",
+            "name": "Ngwaka Son Syst\u00e9me ",
+            "url": "https://downtherabbithole.nl/programma/ngwaka-son-systeme"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Meral Polat",
+            "url": "https://downtherabbithole.nl/programma/meral-polat"
+          },
+          {
+            "start": "22:00",
+            "end": "23:00",
+            "name": "Stephanie Louwrier: Let's Get Louder   ",
+            "url": "https://downtherabbithole.nl/programma/stephanie-louwrier-lets-get-louder"
+          },
+          {
+            "start": "23:00",
+            "end": "03:00",
+            "name": "Orkater & invites: A Divine Comedy ",
+            "url": "https://downtherabbithole.nl/programma/orkater-invites-a-divine-comedy"
+          },
+          {
+            "start": "10:30",
+            "end": "11:00",
+            "name": "Woodcraft ",
+            "url": "https://downtherabbithole.nl/programma/woodcraft"
+          },
+          {
+            "start": "11:45",
+            "end": "12:30",
+            "name": "DOMNIQ",
+            "url": "https://downtherabbithole.nl/programma/domniq"
+          }
+        ],
+        "radiate-v": [
+          {
+            "start": "14:00",
+            "end": "16:00",
+            "name": "Recovery Channel w/ Sanne Lola",
+            "url": "https://downtherabbithole.nl/programma/recovery-channel-w-sanne-lola"
+          },
+          {
+            "start": "16:00",
+            "end": "17:00",
+            "name": "Currently Zo\u00eb ",
+            "url": "https://downtherabbithole.nl/programma/currently-zoe"
+          },
+          {
+            "start": "18:00",
+            "end": "19:00",
+            "name": "Belmont Girl",
+            "url": "https://downtherabbithole.nl/programma/belmont-girl"
+          },
+          {
+            "start": "19:00",
+            "end": "20:00",
+            "name": "Alex Kassian: A Tribute to Manuel G\u00f6ttsching",
+            "url": "https://downtherabbithole.nl/programma/alex-kassian-a-tribute-to-manuel-gottsching"
+          },
+          {
+            "start": "20:00",
+            "end": "21:00",
+            "name": "Rat Section",
+            "url": "https://downtherabbithole.nl/programma/rat-section"
+          },
+          {
+            "start": "21:00",
+            "end": "23:00",
+            "name": "Torus",
+            "url": "https://downtherabbithole.nl/programma/torus"
+          }
+        ],
+        "croque-madame": [
+          {
+            "start": "12:00",
+            "end": "13:30",
+            "name": "The House of Hopelezz",
+            "url": "https://downtherabbithole.nl/programma/the-house-of-hopelezz"
+          },
+          {
+            "start": "22:30",
+            "end": "00:00",
+            "name": "Rwina Lopez",
+            "url": "https://downtherabbithole.nl/programma/rwina-lopez"
+          },
+          {
+            "start": "00:00",
+            "end": "02:00",
+            "name": "VALILA",
+            "url": "https://downtherabbithole.nl/programma/valila"
+          },
+          {
+            "start": "02:00",
+            "end": "04:00",
+            "name": "TWIENA",
+            "url": "https://downtherabbithole.nl/programma/twiena"
           }
         ]
       }
