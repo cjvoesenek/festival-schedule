@@ -71,6 +71,20 @@ class ParsedEvent:
     url: str
 
 
+def gather_special_croque_madame_events(
+    metadata: str, name: str, url: str, day_dutch_name_to_id: dict[str, str]
+) -> list[ParsedEvent]:
+    matches: list[tuple[str, str]] = re.findall(
+        r"(?P<start>\d{2}:\d{2}) - (?P<end>\d{2}:\d{2})", metadata
+    )
+    events: list[ParsedEvent] = []
+    for day_id in day_dutch_name_to_id.values():
+        for match in matches:
+            start, end = match
+            events.append(ParsedEvent(day_id, "croque-madame", start, end, name, url))
+    return events
+
+
 def gather_events_from_artist_page(
     name: str,
     url: str,
@@ -84,11 +98,18 @@ def gather_events_from_artist_page(
     if metadata_div is None:
         raise RuntimeError("Could not find metadata <div> element")
 
+    metadata = metadata_div.text
     matches: list[str] = re.findall(
         r"\w+,\s*\d{2}\s+Jul\s+2025\s+\d{2}:\d{2}\s+-\s+\d{2}:\d{2}\n[^\n]+",
-        metadata_div.text,
+        metadata,
     )
     if len(matches) == 0:
+        # We may be special events on the "CROQUE Madame", so try that.
+        if "Dagelijks" in metadata:
+            return gather_special_croque_madame_events(
+                metadata, name, url, day_dutch_name_to_id
+            )
+
         raise RuntimeError(
             "Could not find appropriately formatted metadata in metadata <div>"
         )

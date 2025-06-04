@@ -37,13 +37,13 @@
       "colour": "#e6ab02"
     },
     {
-      "id": "radiate-v",
-      "name": "RADIATE V",
+      "id": "croque-madame",
+      "name": "the CROQUE Madame",
       "colour": "#a6761d"
     },
     {
-      "id": "croque-madame",
-      "name": "the CROQUE Madame",
+      "id": "radiate-v",
+      "name": "RADIATE V",
       "colour": "#666666"
     }
   ],
@@ -359,38 +359,48 @@
             "url": "https://downtherabbithole.nl/programma/groot-omroepkoor"
           }
         ],
-        "radiate-v": [
-          {
-            "start": "15:00",
-            "end": "17:00",
-            "name": "Torus",
-            "url": "https://downtherabbithole.nl/programma/torus"
-          },
-          {
-            "start": "17:00",
-            "end": "18:00",
-            "name": "Faberyayo DJ set",
-            "url": "https://downtherabbithole.nl/programma/faberyayo-dj-set"
-          },
-          {
-            "start": "19:00",
-            "end": "20:00",
-            "name": "Sondi",
-            "url": "https://downtherabbithole.nl/programma/sondi"
-          },
-          {
-            "start": "21:00",
-            "end": "23:00",
-            "name": "emma dj",
-            "url": "https://downtherabbithole.nl/programma/emma-dj"
-          }
-        ],
         "croque-madame": [
           {
             "start": "12:00",
             "end": "13:30",
             "name": "The House of Hopelezz",
             "url": "https://downtherabbithole.nl/programma/the-house-of-hopelezz"
+          },
+          {
+            "start": "14:00",
+            "end": "15:00",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "15:15",
+            "end": "16:30",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
+          },
+          {
+            "start": "16:45",
+            "end": "17:45",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "18:00",
+            "end": "19:15",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "20:45",
+            "end": "22:00",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
           },
           {
             "start": "22:30",
@@ -415,6 +425,32 @@
             "end": "04:00",
             "name": "Glabra",
             "url": "https://downtherabbithole.nl/programma/glabra"
+          }
+        ],
+        "radiate-v": [
+          {
+            "start": "15:00",
+            "end": "17:00",
+            "name": "Torus",
+            "url": "https://downtherabbithole.nl/programma/torus"
+          },
+          {
+            "start": "17:00",
+            "end": "18:00",
+            "name": "Faberyayo DJ set",
+            "url": "https://downtherabbithole.nl/programma/faberyayo-dj-set"
+          },
+          {
+            "start": "19:00",
+            "end": "20:00",
+            "name": "Sondi",
+            "url": "https://downtherabbithole.nl/programma/sondi"
+          },
+          {
+            "start": "21:00",
+            "end": "23:00",
+            "name": "emma dj",
+            "url": "https://downtherabbithole.nl/programma/emma-dj"
           }
         ]
       }
@@ -754,6 +790,68 @@
             "url": "https://downtherabbithole.nl/programma/animato-kwartet"
           }
         ],
+        "croque-madame": [
+          {
+            "start": "12:30",
+            "end": "13:30",
+            "name": "R3LN4CHT",
+            "url": "https://downtherabbithole.nl/programma/r3ln4cht"
+          },
+          {
+            "start": "14:00",
+            "end": "15:00",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "15:15",
+            "end": "16:30",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
+          },
+          {
+            "start": "16:45",
+            "end": "17:45",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "18:00",
+            "end": "19:15",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "20:45",
+            "end": "22:00",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
+          },
+          {
+            "start": "22:30",
+            "end": "00:00",
+            "name": "Vuur",
+            "url": "https://downtherabbithole.nl/programma/vuur"
+          },
+          {
+            "start": "00:00",
+            "end": "02:00",
+            "name": "MALLAURY",
+            "url": "https://downtherabbithole.nl/programma/mallaury"
+          },
+          {
+            "start": "02:00",
+            "end": "04:00",
+            "name": "Slimfit",
+            "url": "https://downtherabbithole.nl/programma/slimfit"
+          }
+        ],
         "radiate-v": [
           {
             "start": "14:00",
@@ -796,32 +894,6 @@
             "end": "23:00",
             "name": "Loradeniz ",
             "url": "https://downtherabbithole.nl/programma/loradeniz"
-          }
-        ],
-        "croque-madame": [
-          {
-            "start": "12:30",
-            "end": "13:30",
-            "name": "R3LN4CHT",
-            "url": "https://downtherabbithole.nl/programma/r3ln4cht"
-          },
-          {
-            "start": "22:30",
-            "end": "00:00",
-            "name": "Vuur",
-            "url": "https://downtherabbithole.nl/programma/vuur"
-          },
-          {
-            "start": "00:00",
-            "end": "02:00",
-            "name": "MALLAURY",
-            "url": "https://downtherabbithole.nl/programma/mallaury"
-          },
-          {
-            "start": "02:00",
-            "end": "04:00",
-            "name": "Slimfit",
-            "url": "https://downtherabbithole.nl/programma/slimfit"
           }
         ]
       }
@@ -1131,6 +1203,68 @@
             "url": "https://downtherabbithole.nl/programma/domniq"
           }
         ],
+        "croque-madame": [
+          {
+            "start": "12:00",
+            "end": "13:30",
+            "name": "The House of Hopelezz",
+            "url": "https://downtherabbithole.nl/programma/the-house-of-hopelezz"
+          },
+          {
+            "start": "14:00",
+            "end": "15:00",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "15:15",
+            "end": "16:30",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
+          },
+          {
+            "start": "16:45",
+            "end": "17:45",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "18:00",
+            "end": "19:15",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
+          },
+          {
+            "start": "19:30",
+            "end": "20:30",
+            "name": "Striptopia",
+            "url": "https://downtherabbithole.nl/programma/striptopia"
+          },
+          {
+            "start": "20:45",
+            "end": "22:00",
+            "name": "the CROQUE Madame REVUE by MAISON the FAUX ",
+            "url": "https://downtherabbithole.nl/programma/the-croque-madame-revue-by-maison-the-faux"
+          },
+          {
+            "start": "22:30",
+            "end": "00:00",
+            "name": "Rwina Lopez",
+            "url": "https://downtherabbithole.nl/programma/rwina-lopez"
+          },
+          {
+            "start": "00:00",
+            "end": "02:00",
+            "name": "VALILA",
+            "url": "https://downtherabbithole.nl/programma/valila"
+          },
+          {
+            "start": "02:00",
+            "end": "04:00",
+            "name": "TWIENA",
+            "url": "https://downtherabbithole.nl/programma/twiena"
+          }
+        ],
         "radiate-v": [
           {
             "start": "14:00",
@@ -1167,32 +1301,6 @@
             "end": "23:00",
             "name": "Torus",
             "url": "https://downtherabbithole.nl/programma/torus"
-          }
-        ],
-        "croque-madame": [
-          {
-            "start": "12:00",
-            "end": "13:30",
-            "name": "The House of Hopelezz",
-            "url": "https://downtherabbithole.nl/programma/the-house-of-hopelezz"
-          },
-          {
-            "start": "22:30",
-            "end": "00:00",
-            "name": "Rwina Lopez",
-            "url": "https://downtherabbithole.nl/programma/rwina-lopez"
-          },
-          {
-            "start": "00:00",
-            "end": "02:00",
-            "name": "VALILA",
-            "url": "https://downtherabbithole.nl/programma/valila"
-          },
-          {
-            "start": "02:00",
-            "end": "04:00",
-            "name": "TWIENA",
-            "url": "https://downtherabbithole.nl/programma/twiena"
           }
         ]
       }
