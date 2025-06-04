@@ -1,8 +1,10 @@
+import concurrent.futures
 import dataclasses
 import json
 import logging
 import pathlib
 import re
+import sys
 
 from bs4 import BeautifulSoup, Tag
 import requests
@@ -111,8 +113,17 @@ def gather_events_from_artist_page(
     return events
 
 
+type EventsFuture = concurrent.futures.Future[list[ParsedEvent]]
+
+
+@dataclasses.dataclass
+class EventsFutureMetadata:
+    name: str
+    url: str
+
+
 def gather_events(
-    main_url: str, days: list[Day], stages: list[Stage]
+    main_url: str, days: list[Day], stages: list[Stage], max_num_workers: int = 10
 ) -> list[ParsedEvent]:
     stage_name_to_id = {stage.name: stage.id for stage in stages}
     day_dutch_name_to_id = {day.dutch_name: day.id for day in days}
@@ -122,33 +133,48 @@ def gather_events(
 
     soup = BeautifulSoup(response.text, "html.parser")
     artist_links = soup.find_all("a", class_="group")
-    num_artists = len(artist_links)
 
-    events: list[ParsedEvent] = []
-    for i, link in enumerate(artist_links):
-        if not isinstance(link, Tag):
-            continue
-        name = link.attrs["title"]
-        url = link.attrs["href"]
-        if not isinstance(name, str) or not isinstance(url, str):
-            continue
+    futures: dict[EventsFuture, EventsFutureMetadata] = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_num_workers) as executor:
+        # Create a future for each artist page.
+        for link in artist_links:
+            if not isinstance(link, Tag):
+                continue
+            name = link.attrs["title"]
+            url = link.attrs["href"]
+            if not isinstance(name, str) or not isinstance(url, str):
+                continue
 
-        print(f"Processing artist page {i + 1} of {num_artists}: {name}...", end="")
-        logger.info(
-            f'Processing page {i + 1} of {num_artists} for artist "{name}" at URL "{url}".'
-        )
-        try:
-            artist_events = gather_events_from_artist_page(
-                name, url, stage_name_to_id, day_dutch_name_to_id
+            future = executor.submit(
+                gather_events_from_artist_page,
+                name,
+                url,
+                stage_name_to_id,
+                day_dutch_name_to_id,
             )
-            events += artist_events
-            print("success")
-            logger.info(
-                f"Successfully processed page; found {len(artist_events)} event{'s' if len(artist_events) > 1 else ''}."
-            )
-        except Exception:
-            print("failed")
-            logger.exception("Failed")
+            futures[future] = EventsFutureMetadata(name, url)
+
+        # Wait for the futures (running concurrently) to complete.
+        events: list[ParsedEvent] = []
+        for future in concurrent.futures.as_completed(futures):
+            metadata = futures[future]
+            name = metadata.name
+            url = metadata.url
+            try:
+                artist_events = future.result()
+                if len(artist_events) > 0:
+                    name = artist_events[0].name
+                    print(f'Successfully processed page for artist "{name}".')
+                    logger.info(
+                        f'Successfully processed page for artist "{name}" from URL "{url}"; found {len(artist_events)} event{"s" if len(artist_events) > 1 else ""}.'
+                    )
+                    events += artist_events
+            except Exception:
+                print(f'Failed to process page for artist "{name}".', file=sys.stderr)
+                logger.exception(
+                    f'Failed to process page for artist "{name}" from URL "{url}".'
+                )
+
     return events
 
 
@@ -223,7 +249,7 @@ def main() -> None:
         Day("sunday", "zondag", "Sunday", "2025-07-06"),
     ]
 
-    parsed_events = gather_events(main_url, days, stages)
+    parsed_events = gather_events(main_url, days, stages, max_num_workers=10)
 
     logger.info("Converting events to schedule.")
     schedule = convert_events_to_schedule(parsed_events, config, days, stages)
