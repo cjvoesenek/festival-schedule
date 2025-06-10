@@ -114,6 +114,7 @@ def gather_events_from_artist_page(
             "Could not find appropriately formatted metadata in metadata <div>"
         )
 
+    display_name = "💒" if name == "Surprise" else name
     events: list[ParsedEvent] = []
     for match in matches:
         raw_datetime, stage = match.split("\n")
@@ -130,7 +131,7 @@ def gather_events_from_artist_page(
         start = time_match.group("start")
         end = time_match.group("end")
 
-        events.append(ParsedEvent(day_id, stage_id, start, end, name, url))
+        events.append(ParsedEvent(day_id, stage_id, start, end, display_name, url))
     return events
 
 
