@@ -255,14 +255,15 @@ def main() -> None:
     main_url = "https://downtherabbithole.nl/programma"
     config = ScheduleConfig(BlockHeightConfig(30, 100))
     stages = [
-        Stage("hotot", "Hotot", "#1b9e77"),
-        Stage("teddy-widder", "Teddy Widder", "#d95f02"),
-        Stage("fuzzy-lop", "Fuzzy Lop", "#7570b3"),
-        Stage("rex", "REX", "#e7298a"),
-        Stage("bizarre", "The Bizarre", "#66a61e"),
-        Stage("bossa-nova", "Bossa Nova", "#e6ab02"),
-        Stage("croque-madame", "the CROQUE Madame", "#a6761d"),
-        Stage("radiate-v", "RADIATE V", "#666666"),
+        Stage("hotot", "Hotot", "#e41a1c"),
+        Stage("teddy-widder", "Teddy Widder", "#377eb8"),
+        Stage("fuzzy-lop", "Fuzzy Lop", "#4daf4a"),
+        Stage("rex", "REX", "#984ea3"),
+        Stage("bizarre", "The Bizarre", "#ff7f00"),
+        Stage("bossa-nova", "Bossa Nova", "#ffff33"),
+        Stage("croque-madame", "the CROQUE Madame", "#a65628"),
+        Stage("radiate-v", "RADIATE V", "#f781bf"),
+        Stage("holding", "HOLDING", "#999999"),
     ]
     days = [
         Day("friday", "vrijdag", "Friday", "2025-07-04"),
