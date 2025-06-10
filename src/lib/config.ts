@@ -30,5 +30,5 @@ export interface ScheduleEvent {
   start: string;
   end: string;
   name: string;
-  url?: string;
+  url: string | null;
 }

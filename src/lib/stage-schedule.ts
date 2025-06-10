@@ -135,11 +135,11 @@ class StageScheduleBuilder {
       ry: this.borderRadius.toString(),
     });
     rect.classList.add("block");
-    if (event.url) {
+    if (event.url !== null) {
       // If the event has a URL, add a click event to open the URL in a new
       // tab. The block will also be highlighted on hover.
       rect.classList.add("clickable");
-      rect.addEventListener("click", () => window.open(event.url, "_blank"));
+      rect.addEventListener("click", () => window.open(event.url!, "_blank"));
     }
     return rect;
   }
