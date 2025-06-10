@@ -117,10 +117,10 @@ def gather_events_from_artist_page(
     events: list[ParsedEvent] = []
     for match in matches:
         raw_datetime, stage = match.split("\n")
-        stage_id = stage_name_to_id[stage]
+        stage_id = stage_name_to_id[stage.strip()]
 
         day = raw_datetime.split(",")[0].lower()
-        day_id = day_dutch_name_to_id[day]
+        day_id = day_dutch_name_to_id[day.strip()]
 
         time_match = re.search(
             r"(?P<start>\d{2}:\d{2}) - (?P<end>\d{2}:\d{2})", raw_datetime
