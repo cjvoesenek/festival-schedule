@@ -163,7 +163,7 @@ def gather_events(
                 continue
             name = link.attrs["title"]
             url = link.attrs["href"]
-            if not isinstance(name, str) or not isinstance(url, str):
+            if not isinstance(name, str) or not isinstance(url, str) or len(url) == 0:
                 continue
 
             future = executor.submit(
