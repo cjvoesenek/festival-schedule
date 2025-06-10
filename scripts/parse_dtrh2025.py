@@ -168,8 +168,8 @@ def gather_events(
 
             future = executor.submit(
                 gather_events_from_artist_page,
-                name,
-                url,
+                name.strip(),
+                url.strip(),
                 stage_name_to_id,
                 day_dutch_name_to_id,
             )
