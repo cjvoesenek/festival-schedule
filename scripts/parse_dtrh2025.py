@@ -35,7 +35,7 @@ class Event:
     start: str
     end: str
     name: str
-    url: str
+    url: str | None
 
 
 @dataclasses.dataclass
@@ -68,7 +68,11 @@ class ParsedEvent:
     start: str
     end: str
     name: str
-    url: str
+    url: str | None
+
+
+def create_special_holding_event() -> ParsedEvent:
+    return ParsedEvent("friday", "holding", "21:40", "22:20", "🛠️", None)
 
 
 def gather_special_croque_madame_events(
@@ -178,6 +182,7 @@ def gather_events(
 
         # Wait for the futures (running concurrently) to complete.
         events: list[ParsedEvent] = []
+        events.append(create_special_holding_event())
         for future in concurrent.futures.as_completed(futures):
             metadata = futures[future]
             name = metadata.name
