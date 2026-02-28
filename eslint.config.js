@@ -13,7 +13,6 @@ export default tseslint.config(
         projectService: {
           allowDefaultProject: ["*.js"],
         },
-        tsconfigRootDir: ".",
       },
     },
   },
