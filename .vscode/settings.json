@@ -1,5 +1,8 @@
 {
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "[python]": {
+    "editor.tabSize": 4
+  }
 }

@@ -1,12 +1,28 @@
 import dataclasses
+import json
 import logging
 import pathlib
+from typing import Self
 import urllib.parse
 
 from bs4 import BeautifulSoup, Tag
 import requests
 
 logger = logging.getLogger(__name__)
+
+
+@dataclasses.dataclass
+class Day:
+    id: str
+    name: str
+    date: str
+
+
+@dataclasses.dataclass
+class ParsedEvent:
+    day_id: str
+    name: str
+    url: str
 
 
 @dataclasses.dataclass
@@ -42,6 +58,11 @@ class DaySchedule:
     date: str
     events: dict[str, list[Event]]
 
+    @classmethod
+    def empty(cls, day: Day, stages: list[Stage]) -> Self:
+        events: dict[str, list[Event]] = {stage.id: [] for stage in stages}
+        return cls(day.id, day.name, day.date, events)
+
 
 @dataclasses.dataclass
 class Schedule:
@@ -49,19 +70,53 @@ class Schedule:
     stages: list[Stage]
     schedule: list[DaySchedule]
 
+    def is_in_schedule(self, day_id: str, name: str) -> bool:
+        day_index = self._day_id_to_index(day_id)
+        for stage_events in self.schedule[day_index].events.values():
+            for event in stage_events:
+                if event.name == name:
+                    return True
+        else:
+            return False
 
-@dataclasses.dataclass
-class Day:
-    id: str
-    name: str
-    date: str
+    def add_event(self, stage_id: str, day_id: str, event: Event) -> None:
+        day_index = self._day_id_to_index(day_id)
+        stage_events = self.schedule[day_index].events[stage_id]
+        stage_events.append(event)
+        stage_events.sort(key=lambda event: event.start)
 
+    def save(self, output_path: pathlib.Path) -> None:
+        prepared = dataclasses.asdict(self)
+        with output_path.open("w") as file:
+            json.dump(prepared, file, indent=2)
 
-@dataclasses.dataclass
-class ParsedEvent:
-    day_id: str
-    name: str
-    url: str
+    def _day_id_to_index(self, day_id: str) -> int:
+        day_index = next(i for i, day in enumerate(self.schedule) if day.id == day_id)
+        assert day_index is not None
+        return day_index
+
+    @classmethod
+    def load(cls, path: pathlib.Path) -> Self:
+        with path.open() as file:
+            raw = json.load(file)
+        config = ScheduleConfig(**raw["config"])
+        stages = [Stage(**raw_stage) for raw_stage in raw["stages"]]
+        schedule: list[DaySchedule] = []
+        for raw_day_schedule in raw["schedule"]:
+            events: dict[str, list[Event]] = {}
+            for stage_id, raw_stage_events in raw_day_schedule["events"].items():
+                events[stage_id] = [
+                    Event(**raw_event) for raw_event in raw_stage_events
+                ]
+            schedule.append(
+                DaySchedule(
+                    raw_day_schedule["id"],
+                    raw_day_schedule["name"],
+                    raw_day_schedule["date"],
+                    events,
+                )
+            )
+        return cls(config, stages, schedule)
 
 
 def gather_events(main_url: str, days: list[Day]) -> list[ParsedEvent]:
@@ -93,9 +148,15 @@ def gather_events(main_url: str, days: list[Day]) -> list[ParsedEvent]:
         day_container = link.find("span", class_="act__content-meta")
         assert isinstance(day_container, Tag)
         day_span = day_container.find("span")
+        if day_span is None:
+            # Some cases need manual treatment; skip them for now and handle them as
+            # we encounter them.
+            continue
+
         assert isinstance(day_span, Tag)
         day = day_span.text
 
+        assert day in day_to_id
         day_id = day_to_id[day]
 
         events.append(ParsedEvent(day_id, name, absolute_url))
@@ -104,17 +165,32 @@ def gather_events(main_url: str, days: list[Day]) -> list[ParsedEvent]:
 
 
 def annotate_events(
-    parsed_events: list[ParsedEvent], stages: list[Stage], days: list[Day]
+    parsed_events: list[ParsedEvent],
+    stages: list[Stage],
+    days: list[Day],
+    schedule: Schedule,
+    output_path: pathlib.Path,
 ) -> None:
     for day in days:
         parsed_events_for_day = (
             event for event in parsed_events if event.day_id == day.id
         )
         for parsed_event in parsed_events_for_day:
+            # Check whether this event already exists, skip annotating it
+            # otherwise.
+            if schedule.is_in_schedule(day.id, parsed_event.name):
+                logger.info(
+                    f'Artist "{parsed_event.name}" already in schedule, skipping.'
+                )
+                continue
+
             print(f"{day.name}: {parsed_event.name}")
             stage_id = prompt_for_stage(stages)
+            print("  Start time?")
             start_time = prompt_for_time()
+            print("  End time?")
             end_time = prompt_for_end_time(start_time, default_duration_minutes=45)
+            print()
 
             event = Event(
                 time_to_string(start_time),
@@ -122,12 +198,15 @@ def annotate_events(
                 parsed_event.name,
                 parsed_event.url,
             )
-            print(event)
+
+            # Add the event and save the updated schedule.
+            schedule.add_event(stage_id, day.id, event)
+            schedule.save(output_path)
 
 
 def time_to_string(time: tuple[int, int]) -> str:
     hours, minutes = time
-    return f"{hours}:{minutes}"
+    return f"{hours:02d}:{minutes:02d}"
 
 
 def prompt_for_stage(stages: list[Stage]) -> str:
@@ -139,8 +218,8 @@ def prompt_for_stage(stages: list[Stage]) -> str:
 
 
 def prompt_for_time() -> tuple[int, int]:
-    hour = prompt_for_integer(0, 23, "hours")
-    minute = prompt_for_integer(0, 59, "minutes")
+    hour = prompt_for_integer(0, 23, "  hours")
+    minute = prompt_for_integer(0, 59, "  minutes")
     return hour, minute
 
 
@@ -155,8 +234,8 @@ def prompt_for_end_time(
         default_end_hours += 1
     default_end_hours %= 24
 
-    end_hours = prompt_for_integer(0, 23, "hours", default_end_hours)
-    end_minutes = prompt_for_integer(0, 59, "minutes", default_end_minutes)
+    end_hours = prompt_for_integer(0, 23, "  hours", default_end_hours)
+    end_minutes = prompt_for_integer(0, 59, "  minutes", default_end_minutes)
 
     return end_hours, end_minutes
 
@@ -183,6 +262,13 @@ def prompt_for_integer(
             return value
         except ValueError:
             print(error_prompt, end="")
+
+
+def create_empty_schedule(
+    config: ScheduleConfig, stages: list[Stage], days: list[Day]
+) -> Schedule:
+    day_schedules = [DaySchedule.empty(day, stages) for day in days]
+    return Schedule(config, stages, day_schedules)
 
 
 def main() -> None:
@@ -215,8 +301,17 @@ def main() -> None:
         Day("sunday", "Sunday", "2025-06-14"),
     ]
 
+    if not output_path.exists():
+        logger.info("Creating new empty schedule.")
+        schedule = create_empty_schedule(config, stages, days)
+        schedule.save(output_path)
+    else:
+        logger.info(f'Loading existing schedule from "{output_path}".')
+        schedule = Schedule.load(output_path)
+    print(schedule)
+
     parsed_events = gather_events(main_url, days)
-    annotate_events(parsed_events, stages, days)
+    annotate_events(parsed_events, stages, days, schedule, output_path)
 
     # logger.info("Converting events to schedule.")
     # schedule = convert_events_to_schedule(parsed_events, config, days, stages)
