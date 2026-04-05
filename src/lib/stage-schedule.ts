@@ -81,8 +81,8 @@ class StageScheduleBuilder {
 
     // Append the groups in a specific order to ensure they are layered
     // appropriately (from bottom to top).
-    group.appendChild(gBlocks);
-    group.appendChild(gText);
+    group.append(gBlocks);
+    group.append(gText);
 
     const range = this.schedule.getRangeForStage(this.dayId, this.stageId);
     const rangeInCoords = range.map((time) =>
@@ -112,8 +112,8 @@ class StageScheduleBuilder {
       const block = this.createBlock(xStart, width, event);
       const blockText = this.createBlockText(xStart, width, event);
 
-      gBlocks.appendChild(block);
-      gText.appendChild(blockText);
+      gBlocks.append(block);
+      gText.append(blockText);
     }
     return [gBlocks, gText];
   }
@@ -175,9 +175,9 @@ class StageScheduleBuilder {
     timeDiv.classList.add("time");
     timeDiv.textContent = `${event.start} – ${event.end}`;
 
-    textContainerDiv.appendChild(nameDiv);
-    textContainerDiv.appendChild(timeDiv);
-    foreignObject.appendChild(textContainerDiv);
+    textContainerDiv.append(nameDiv);
+    textContainerDiv.append(timeDiv);
+    foreignObject.append(textContainerDiv);
 
     return foreignObject;
   }

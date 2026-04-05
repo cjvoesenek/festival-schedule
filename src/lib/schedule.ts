@@ -36,12 +36,11 @@ export class Schedule {
     if (dayId === undefined) {
       // If the day ID was not specified, return all stage IDs.
       return this.stages.map((stage) => stage.id);
-    } else {
-      // Otherwise, return all stage IDs that have an event on the specified
-      // day.
-      const daySchedule = this.getDay(dayId);
-      return Object.keys(daySchedule.events);
     }
+    // Otherwise, return all stage IDs that have an event on the specified
+    // day.
+    const daySchedule = this.getDay(dayId);
+    return Object.keys(daySchedule.events);
   }
 
   hasStage(dayId: string, stageId: string): boolean {
@@ -56,10 +55,9 @@ export class Schedule {
     if (dayId === undefined) {
       // Return all stages if no day ID is specified
       return this.stages;
-    } else {
-      const stageIds = this.getStageIds(dayId);
-      return this.stages.filter((stage) => stageIds.includes(stage.id));
     }
+    const stageIds = this.getStageIds(dayId);
+    return this.stages.filter((stage) => stageIds.includes(stage.id));
   }
 
   getDay(dayId: string): DayScheduleSpecification {
@@ -71,7 +69,7 @@ export class Schedule {
   }
 
   getStage(stageId: string): StageSpecification {
-    const stage = this.stages.find((stage) => stage.id === stageId);
+    const stage = this.stages.find((current) => current.id === stageId);
     if (!stage) {
       throw new Error(`No stage with ID "${stageId}" exists.`);
     }
@@ -183,7 +181,7 @@ export class Schedule {
   private static parseDateTime(date: string, time: string): Date {
     const reference = Schedule.parseDate(date);
 
-    const tokens = time.split(":").map((x) => parseInt(x));
+    const tokens = time.split(":").map((x) => parseInt(x, 10));
     let hours = tokens[0];
     const minutes = tokens[1];
     if (hours === undefined || minutes === undefined) {

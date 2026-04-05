@@ -38,7 +38,7 @@ export class App {
 
     // Start with the first day and all stages enabled.
     const firstDayId = schedule.getDayIds()[0];
-    if (!firstDayId) {
+    if (firstDayId === undefined) {
       throw new Error("Cannot render schedule without days.");
     }
     this.dayId = firstDayId;
@@ -72,36 +72,21 @@ export class App {
       this.saveScrollPosition();
     });
 
-    // The page may in some (low resolution/small window) situations also be
-    // scrolled vertically. In these situations it is more intuitive that the
-    // mouse wheel scrolls vertically. However, when the page cannot be scrolled
-    // vertically, the mouse wheel should scroll each container horizontally.
-    const wheelCallback = (
-      container: HTMLDivElement,
-      event: WheelEvent,
-    ): void => {
-      const root = document.documentElement;
-      const canScrollVertically = root.scrollHeight > root.clientHeight;
-      if (canScrollVertically) return;
-
-      event.preventDefault();
-      container.scrollLeft += event.deltaY;
-    };
-    this.daysContainer.addEventListener("wheel", (event) =>
-      wheelCallback(this.daysContainer, event),
-    );
-    this.stagesContainer.addEventListener("wheel", (event) =>
-      wheelCallback(this.stagesContainer, event),
-    );
-    this.eventsContainer.addEventListener("wheel", (event) =>
-      wheelCallback(this.eventsContainer, event),
-    );
+    this.daysContainer.addEventListener("wheel", (event) => {
+      this.scrolLWheelCallback(this.daysContainer, event);
+    });
+    this.stagesContainer.addEventListener("wheel", (event) => {
+      this.scrolLWheelCallback(this.stagesContainer, event);
+    });
+    this.eventsContainer.addEventListener("wheel", (event) => {
+      this.scrolLWheelCallback(this.eventsContainer, event);
+    });
 
     // Clicking the "now" button should scroll to the current time.
     this.nowButton.addEventListener("click", () => {
       // If the current time is not in the schedule, do nothing (the button
       // should be disabled anyway)...
-      if (!this.dayIdCurrentTime) return;
+      if (this.dayIdCurrentTime === null) return;
 
       // Set the current day and scroll to the current time line.
       this.setDayId(this.dayIdCurrentTime);
@@ -115,7 +100,9 @@ export class App {
     });
 
     // Add a timer to update the current time lines every 30 seconds.
-    window.setInterval(() => this.updateForCurrentTime(), 30 * 1000);
+    window.setInterval(() => {
+      this.updateForCurrentTime();
+    }, 30 * 1000);
     // Also run the callback once to update for the current time immediately.
     this.updateForCurrentTime();
 
@@ -138,15 +125,15 @@ export class App {
   // If present, loads the day and enabled stages from local storage.
   private loadState(): void {
     const dayId = localStorage.getItem("dayId");
-    if (dayId) {
+    if (dayId !== null) {
       this.dayId = dayId;
     }
     const enabledStageIds = localStorage.getItem("enabledStageIds");
-    if (enabledStageIds) {
+    if (enabledStageIds !== null) {
       this.enabledStageIds = JSON.parse(enabledStageIds) as string[];
     }
     const scrollPosition = localStorage.getItem("scrollPosition");
-    if (scrollPosition) {
+    if (scrollPosition !== null) {
       this.scrollPosition = parseFloat(scrollPosition);
     }
   }
@@ -163,10 +150,12 @@ export class App {
       dayElement.classList.add(isSelected ? "active" : "inactive");
       dayElement.textContent = day.name;
 
-      dayElement.addEventListener("click", () => this.setDayId(day.id));
+      dayElement.addEventListener("click", () => {
+        this.setDayId(day.id);
+      });
 
       this.dayElements.set(day.id, dayElement);
-      this.daysContainer.appendChild(dayElement);
+      this.daysContainer.append(dayElement);
     }
   }
 
@@ -181,17 +170,17 @@ export class App {
 
       stageElement.style.backgroundColor = stage.colour;
 
-      stageElement.addEventListener("click", () =>
-        this.toggleStageId(stage.id),
-      );
+      stageElement.addEventListener("click", () => {
+        this.toggleStageId(stage.id);
+      });
 
       const stageTextElement = document.createElement("div");
       stageTextElement.textContent = stage.name;
 
-      stageElement.appendChild(stageTextElement);
+      stageElement.append(stageTextElement);
 
       this.stageElements.set(stage.id, stageElement);
-      this.stagesContainer.appendChild(stageElement);
+      this.stagesContainer.append(stageElement);
     }
   }
 
@@ -212,11 +201,11 @@ export class App {
 
       // Check whether the stage is available for this day and add the
       // appropriate class if it is not.
-      if (!this.schedule.hasStage(this.dayId, stage.id)) {
+      if (this.schedule.hasStage(this.dayId, stage.id)) {
+        stageElement.classList.remove("unavailable");
+      } else {
         stageElement.classList.add("unavailable");
         continue;
-      } else {
-        stageElement.classList.remove("unavailable");
       }
       // Check whether the stage is enabled and add the appropriate class.
       const isSelected = this.enabledStageIds.includes(stage.id);
@@ -234,10 +223,10 @@ export class App {
       now,
       this.enabledStageIds,
     );
-    if (this.dayIdCurrentTime) {
-      this.nowButton.classList.remove("unavailable");
-    } else {
+    if (this.dayIdCurrentTime === null) {
       this.nowButton.classList.add("unavailable");
+    } else {
+      this.nowButton.classList.remove("unavailable");
     }
   }
 
@@ -288,5 +277,21 @@ export class App {
   private saveScrollPosition(): void {
     this.scrollPosition = this.eventsContainer.scrollLeft;
     localStorage.setItem("scrollPosition", this.scrollPosition.toString());
+  }
+
+  private scrolLWheelCallback(
+    container: HTMLDivElement,
+    event: WheelEvent,
+  ): void {
+    // The page may in some (low resolution/small window) situations also be
+    // scrolled vertically. In these situations it is more intuitive that the
+    // mouse wheel scrolls vertically. However, when the page cannot be scrolled
+    // vertically, the mouse wheel should scroll each container horizontally.
+    const root = document.documentElement;
+    const canScrollVertically = root.scrollHeight > root.clientHeight;
+    if (canScrollVertically) return;
+
+    event.preventDefault();
+    container.scrollLeft += event.deltaY;
   }
 }

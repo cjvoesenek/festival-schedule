@@ -28,5 +28,5 @@
     "noUnusedParameters": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["src"]
+  "include": ["src", "oxlint.config.ts"]
 }

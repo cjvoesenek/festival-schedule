@@ -19,7 +19,7 @@ export class BlockSchedule {
     enabledStageIds: string[],
   ) {
     this.svg = createSvgElement<SVGSVGElement>("svg");
-    container.appendChild(this.svg);
+    container.append(this.svg);
 
     this.schedule = schedule;
     this.stageSchedules = this.generateStageSchedules(schedule);
@@ -207,7 +207,7 @@ export class BlockSchedule {
   // possibly show: from 00:00 until 00:00 the next day.
   private createHourLines(): void {
     const group = createSvgElement<SVGGElement>("g");
-    this.svg.appendChild(group);
+    this.svg.append(group);
 
     const hours = StageSchedule.getHourCoordinates();
     for (let x = hours.start; x < hours.end; x += hours.step) {
@@ -218,13 +218,13 @@ export class BlockSchedule {
         y2: this.getMaximumHeight().toString(),
       });
       line.classList.add("hour");
-      group.appendChild(line);
+      group.append(line);
     }
   }
 
   private addStageSchedules(): void {
     const group = createSvgElement("g");
-    this.svg.appendChild(group);
+    this.svg.append(group);
 
     for (const dayId of this.stageSchedules.keys()) {
       const daySchedule = this.stageSchedules.get(dayId);
@@ -232,14 +232,14 @@ export class BlockSchedule {
       for (const stageId of daySchedule.keys()) {
         const stageSchedule = daySchedule.get(stageId);
         if (!stageSchedule) continue;
-        group.appendChild(stageSchedule.element);
+        group.append(stageSchedule.element);
       }
     }
   }
 
   private createCurrentTimeLine(): SVGLineElement {
     const group = createSvgElement("g");
-    this.svg.appendChild(group);
+    this.svg.append(group);
 
     // Create a line indicating the current time. We set its height based on the
     // maximum height the schedule can attain; if fewer stages are selected, the
@@ -251,7 +251,7 @@ export class BlockSchedule {
       y2: this.getMaximumHeight().toString(),
     });
     currentTimeLineElement.classList.add("current-time");
-    group.appendChild(currentTimeLineElement);
+    group.append(currentTimeLineElement);
 
     return currentTimeLineElement;
   }
