@@ -1,4 +1,5 @@
 {
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "printWidth": 80,
   "tabWidth": 2,
   "useTabs": false,
@@ -13,5 +14,9 @@
   "htmlWhitespaceSensitivity": "css",
   "endOfLine": "lf",
   "embeddedLanguageFormatting": "off",
-  "singleAttributePerLine": true
+  "singleAttributePerLine": true,
+  "insertFinalNewline": true,
+  "sortImports": true,
+  "sortPackageJson": true,
+  "ignorePatterns": ["scripts"]
 }

@@ -1,7 +1,6 @@
 import "./main.css";
-import dtrh2025 from "../schedules/dtrh2025.json";
 import { version } from "../package.json";
-
+import dtrh2025 from "../schedules/dtrh2025.json";
 import { App, Schedule } from "./lib";
 
 function main(): void {
