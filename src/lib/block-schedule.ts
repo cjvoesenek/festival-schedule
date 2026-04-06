@@ -7,10 +7,10 @@ import { StageSchedule } from "./stage-schedule";
 // This class represents a block schedule for a single day, for a certain
 // selection of stages.
 export class BlockSchedule {
-  private svg: SVGSVGElement;
-  private schedule: Schedule;
-  private stageSchedules: Map<string, Map<string, StageSchedule>>;
-  private currentTimeLine: SVGLineElement;
+  private readonly svg: SVGSVGElement;
+  private readonly schedule: Schedule;
+  private readonly stageSchedules: Map<string, Map<string, StageSchedule>>;
+  private readonly currentTimeLine: SVGLineElement;
 
   constructor(
     container: HTMLElement,
@@ -71,13 +71,9 @@ export class BlockSchedule {
   hideAllStages(): void {
     for (const daySchedule of this.stageSchedules.values()) {
       for (const stageSchedule of daySchedule.values()) {
-        const element = stageSchedule.element;
+        const { element } = stageSchedule;
         const isActive = element.classList.contains("active");
-        if (isActive) {
-          element.classList.add("was-active");
-        } else {
-          element.classList.remove("was-active");
-        }
+        element.classList.toggle("was-active", isActive);
         element.classList.remove("active");
         element.classList.add("inactive");
       }
@@ -104,7 +100,7 @@ export class BlockSchedule {
   ): number {
     const stageSchedule = this.stageSchedules.get(dayId);
     if (!stageSchedule) return 0;
-    return Array.from(stageSchedule.keys()).filter((stageId) =>
+    return [...stageSchedule.keys()].filter((stageId) =>
       enabledStageIds.includes(stageId),
     ).length;
   }
@@ -118,7 +114,7 @@ export class BlockSchedule {
       enabledStageIds,
     );
 
-    const blockHeight = this.schedule.getConfig().blockHeight;
+    const { blockHeight } = this.schedule.getConfig();
     const numStages = this.computeCurrentNumberOfAvailableStages(
       dayId,
       enabledStageIds,
@@ -147,7 +143,7 @@ export class BlockSchedule {
     if (isGrowing) {
       updateSize();
     } else {
-      window.setTimeout(updateSize, 500);
+      globalThis.setTimeout(updateSize, 500);
     }
   }
 
@@ -161,8 +157,8 @@ export class BlockSchedule {
       throw new Error(`No day with ID "${dayId}" exists.`);
     }
 
-    const availableStageIds = Array.from(stageSchedules.keys()).filter(
-      (stageId) => enabledStageIds.includes(stageId),
+    const availableStageIds = [...stageSchedules.keys()].filter((stageId) =>
+      enabledStageIds.includes(stageId),
     );
     return availableStageIds.map((stageId, index) => {
       const currentSchedule = stageSchedules.get(stageId);
@@ -178,9 +174,9 @@ export class BlockSchedule {
   private generateStageSchedules(
     schedule: Schedule,
   ): Map<string, Map<string, StageSchedule>> {
-    const stageSchedules: Map<string, Map<string, StageSchedule>> = new Map();
+    const stageSchedules = new Map<string, Map<string, StageSchedule>>();
     for (const dayId of schedule.getDayIds()) {
-      const currentStageSchedules: Map<string, StageSchedule> = new Map();
+      const currentStageSchedules = new Map<string, StageSchedule>();
       stageSchedules.set(dayId, currentStageSchedules);
       for (const stageId of schedule.getStageIds(dayId)) {
         const stageSchedule = StageSchedule.fromSchedule(
@@ -196,9 +192,7 @@ export class BlockSchedule {
 
   private getMaximumHeight(): number {
     const maxNumStages = Math.max(
-      ...Array.from(this.stageSchedules.values()).map(
-        (schedules) => schedules.size,
-      ),
+      ...[...this.stageSchedules.values()].map((schedules) => schedules.size),
     );
     return this.schedule.getConfig().blockHeight.coords * maxNumStages;
   }
@@ -213,8 +207,8 @@ export class BlockSchedule {
     for (let x = hours.start; x < hours.end; x += hours.step) {
       const line = createSvgElement<SVGLineElement>("line", {
         x1: x.toString(),
-        y1: "0",
         x2: x.toString(),
+        y1: "0",
         y2: this.getMaximumHeight().toString(),
       });
       line.classList.add("hour");
@@ -246,8 +240,8 @@ export class BlockSchedule {
     // rest will just be outside the viewBox.
     const currentTimeLineElement = createSvgElement<SVGLineElement>("line", {
       x1: "0",
-      y1: "0",
       x2: "0",
+      y1: "0",
       y2: this.getMaximumHeight().toString(),
     });
     currentTimeLineElement.classList.add("current-time");

@@ -42,8 +42,8 @@ export class StageSchedule {
   // stage schedule.
   static getHourCoordinates(): HourCoordinates {
     return {
-      start: 0,
       end: 48 * 60,
+      start: 0,
       step: 60,
     };
   }
@@ -53,12 +53,12 @@ export class StageSchedule {
 //
 // This class is used to build a stage schedule from a schedule object.
 class StageScheduleBuilder {
-  private dayId: string;
-  private stageId: string;
-  private schedule: Schedule;
-  private stageColour: string;
-  private referenceTime: Date;
-  private borderRadius: number;
+  private readonly dayId: string;
+  private readonly stageId: string;
+  private readonly schedule: Schedule;
+  private readonly stageColour: string;
+  private readonly referenceTime: Date;
+  private readonly borderRadius: number;
 
   constructor(schedule: Schedule, dayId: string, stageId: string) {
     this.dayId = dayId;
@@ -126,13 +126,13 @@ class StageScheduleBuilder {
   ): SVGRectElement {
     const config = this.schedule.getConfig();
     const rect = createSvgElement<SVGRectElement>("rect", {
-      x: xStart.toString(),
-      y: "0",
-      width: width.toString(),
-      height: config.blockHeight.coords.toString(),
       fill: this.stageColour,
+      height: config.blockHeight.coords.toString(),
       rx: this.borderRadius.toString(),
       ry: this.borderRadius.toString(),
+      width: width.toString(),
+      x: xStart.toString(),
+      y: "0",
     });
     rect.classList.add("block");
     if (event.url !== null) {
@@ -156,10 +156,10 @@ class StageScheduleBuilder {
     const foreignObject = createSvgElement<SVGForeignObjectElement>(
       "foreignObject",
       {
+        height: config.blockHeight.coords.toString(),
+        width: width.toString(),
         x: xStart.toString(),
         y: "0",
-        width: width.toString(),
-        height: config.blockHeight.coords.toString(),
       },
     );
     foreignObject.classList.add("block-text");
@@ -192,7 +192,7 @@ class StageScheduleBuilder {
     // parseFloat will just strip off the "px"...
     const radiusPixels = parseFloat(style.borderRadius);
 
-    const blockHeight = this.schedule.getConfig().blockHeight;
+    const { blockHeight } = this.schedule.getConfig();
     const factor = blockHeight.coords / blockHeight.pixels;
     return radiusPixels * factor;
   }

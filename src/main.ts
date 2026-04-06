@@ -1,7 +1,8 @@
-import "./main.css";
 import { version } from "../package.json";
 import dtrh2025 from "../schedules/dtrh2025.json";
 import { App, Schedule } from "./lib";
+
+import "./main.css";
 
 function main(): void {
   // Create schedule and application state manager.

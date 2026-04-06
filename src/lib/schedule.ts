@@ -11,10 +11,10 @@ import type {
 // This contains a list of stages and a schedule, where the schedule is a list
 // of days, each with a list of events for each stage.
 export class Schedule {
-  private config: ScheduleConfig;
-  private stages: StageSpecification[];
-  private schedule: DayScheduleSpecification[];
-  private scheduleRanges: Map<string, Map<string, [Date, Date]>>;
+  private readonly config: ScheduleConfig;
+  private readonly stages: StageSpecification[];
+  private readonly schedule: DayScheduleSpecification[];
+  private readonly scheduleRanges: Map<string, Map<string, [Date, Date]>>;
 
   constructor(specification: ScheduleSpecification) {
     this.config = specification.config;
@@ -88,7 +88,7 @@ export class Schedule {
   }
 
   getEventRange(dayId: string, event: ScheduleEvent): [Date, Date] {
-    const date = this.getDay(dayId).date;
+    const { date } = this.getDay(dayId);
     const start = Schedule.parseDateTime(date, event.start);
     const end = Schedule.parseDateTime(date, event.end);
     return [start, end];
@@ -107,9 +107,9 @@ export class Schedule {
   }
 
   getRange(dayId: string, stageIds: string[]): [Date, Date] {
-    const availableStageIds = stageIds.filter((stageId) => {
-      return this.hasStage(dayId, stageId);
-    });
+    const availableStageIds = stageIds.filter((stageId) =>
+      this.hasStage(dayId, stageId),
+    );
     const ranges = availableStageIds.map((stageId) =>
       this.getRangeForStage(dayId, stageId),
     );
@@ -154,7 +154,7 @@ export class Schedule {
 
   // Computes the start and end times for each stage on each day.
   private computeScheduleRanges(): Map<string, Map<string, [Date, Date]>> {
-    const ranges: Map<string, Map<string, [Date, Date]>> = new Map();
+    const ranges = new Map<string, Map<string, [Date, Date]>>();
     for (const day of this.getDays()) {
       ranges.set(day.id, new Map());
       const stageRanges = ranges.get(day.id)!;
@@ -182,18 +182,16 @@ export class Schedule {
     const reference = Schedule.parseDate(date);
 
     const tokens = time.split(":").map((x) => parseInt(x, 10));
-    let hours = tokens[0];
-    const minutes = tokens[1];
+    const [hours, minutes] = tokens;
     if (hours === undefined || minutes === undefined) {
       throw new Error(`Failed to parse time "${time}".`);
     }
     // Schedules run into the night, so make sure that the day is increased if
     // the event is after midnight.
-    if (hours < 6) {
-      hours += 24;
-    }
+    const wrappedHours = hours < 6 ? hours + 24 : hours;
+
     // Compute the number of milliseconds since the reference time.
-    const milliseconds = (hours * 60 + minutes) * 60 * 1000;
+    const milliseconds = (wrappedHours * 60 + minutes) * 60 * 1000;
 
     // Create a new date from the reference time and the offset.
     return new Date(reference.getTime() + milliseconds);

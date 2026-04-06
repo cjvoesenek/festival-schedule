@@ -6,16 +6,16 @@ import type { Schedule } from "./schedule";
 // This class manages the state of the application, including the selected day
 // and stages.
 export class App {
-  private daysContainer: HTMLDivElement;
-  private stagesContainer: HTMLDivElement;
-  private eventsContainer: HTMLDivElement;
-  private nowButton: HTMLDivElement;
+  private readonly daysContainer: HTMLDivElement;
+  private readonly stagesContainer: HTMLDivElement;
+  private readonly eventsContainer: HTMLDivElement;
+  private readonly nowButton: HTMLDivElement;
 
-  private dayElements: Map<string, HTMLDivElement>;
-  private stageElements: Map<string, HTMLDivElement>;
+  private readonly dayElements: Map<string, HTMLDivElement>;
+  private readonly stageElements: Map<string, HTMLDivElement>;
 
-  private schedule: Schedule;
-  private blockSchedule: BlockSchedule;
+  private readonly schedule: Schedule;
+  private readonly blockSchedule: BlockSchedule;
 
   private dayId: string;
   private enabledStageIds: string[];
@@ -37,7 +37,7 @@ export class App {
     this.schedule = schedule;
 
     // Start with the first day and all stages enabled.
-    const firstDayId = schedule.getDayIds()[0];
+    const [firstDayId] = schedule.getDayIds();
     if (firstDayId === undefined) {
       throw new Error("Cannot render schedule without days.");
     }
@@ -100,7 +100,7 @@ export class App {
     });
 
     // Add a timer to update the current time lines every 30 seconds.
-    window.setInterval(() => {
+    globalThis.setInterval(() => {
       this.updateForCurrentTime();
     }, 30 * 1000);
     // Also run the callback once to update for the current time immediately.
@@ -223,11 +223,10 @@ export class App {
       now,
       this.enabledStageIds,
     );
-    if (this.dayIdCurrentTime === null) {
-      this.nowButton.classList.add("unavailable");
-    } else {
-      this.nowButton.classList.remove("unavailable");
-    }
+    this.nowButton.classList.toggle(
+      "unavailable",
+      this.dayIdCurrentTime === null,
+    );
   }
 
   private setDayId(dayId: string): void {
